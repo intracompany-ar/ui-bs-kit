@@ -5,6 +5,18 @@
   "keywords": [
     "frontend"
   ],
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
   "repository": {
     "type": "git",
     "url": "ui-bs-kit"
@@ -12,8 +24,26 @@
   "license": "MIT",
   "author": "IntraCompany",
   "type": "module",
-  "main": "index.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "copy:vue": "cp -R src/components dist && cp -R src/layouts dist",
+    "copy:audio": "cp -R src/audio dist",
+    "copy:css": "cp -R src/css dist",
+    "copy:fonts": "cp -R src/fonts dist",
+    "build": "vite build"
+  },
+  "devDependencies": {
+    "@types/bootstrap": "^5.2.10"
+  },
+  "peerDependencies": {
+    "vite": "^6.0",
+    "@vitejs/plugin-vue": "^5.0",
+    "@selectize/selectize": "^0.15",
+    "dayjs": "^1.11",
+    "bootstrap": "^5.0.0",
+    "vue": "^3.0",
+    "datatables.net-bs5": "^2.2",
+    "vue-router": "^4.1",
+    "axios": "^1.6",
+    "@intracompany/commons_front": "^1.0"
   }
 }
