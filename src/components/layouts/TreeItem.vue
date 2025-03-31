@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, inject } from 'vue'
-import { useStoreAdvices } from './../../stores/store_advices'
+import { useStoreAdvices } from '@intracompany/commons_front'
 const storeAdvices = useStoreAdvices()
 const emit = defineEmits(['getRows', 'itemSelected', 'toAdd']);
 

@@ -29,21 +29,24 @@
     "copy:audio": "cp -R src/audio dist",
     "copy:css": "cp -R src/css dist",
     "copy:fonts": "cp -R src/fonts dist",
-    "build": "vite build"
+    "build": "vite build",
+    "release": "npm run copy:vue && npm run copy:audio && npm run copy:css && npm run copy:fonts && vite build && npm version patch && npm publish --access public && git push"
   },
   "devDependencies": {
-    "@types/bootstrap": "^5.2.10"
+    "@types/bootstrap": "^5.2.10",
+    "sass": "1.77"
   },
   "peerDependencies": {
-    "vite": "^6.0",
-    "@vitejs/plugin-vue": "^5.0",
+    "@intracompany/commons_front": "file:../commons_front",
     "@selectize/selectize": "^0.15",
-    "dayjs": "^1.11",
-    "bootstrap": "^5.0.0",
-    "vue": "^3.0",
-    "datatables.net-bs5": "^2.2",
-    "vue-router": "^4.1",
+    "@vitejs/plugin-vue": "^5.0",
     "axios": "^1.6",
-    "@intracompany/commons_front": "^1.0"
+    "bootstrap": "^5.0.0",
+    "datatables.net-bs5": "^2.2",
+    "dayjs": "^1.11",
+    "vite": "^6.0",
+    "vue": "^3.0",
+    "vue-router": "^4.1",
+    "datatables.net-buttons-bs5": "^3.2"
   }
 }

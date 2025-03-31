@@ -1,3 +1,7 @@
+import './css/app.css'
+import './css/_fonts.css'
+import './css/_corporate_colors.css'
+
 export { default as ButtonPlus } from './components/forms/buttons/ButtonPlus.vue'
 export { default as ButtonSearch } from './components/forms/buttons/ButtonSearch.vue'
 export { default as ButtonSubmit } from './components/forms/buttons/ButtonSubmit.vue'

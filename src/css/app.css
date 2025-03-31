@@ -1,4 +1,4 @@
-@import 'commons_front/src/scss/app.scss';
+@import './../scss/app.scss';
 
 @import "./_corporate_colors.css";
 
