@@ -6,11 +6,11 @@
     "frontend"
   ],
   "main": "./dist/index.umd.js",
-  "module": "./dist/index.mjs",
+  "module": "./dist/index.es.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/index.mjs",
+      "import": "./dist/index.es.js",
       "require": "./dist/index.umd.js"
     },
     "./ui-bs-kit.css": {
@@ -28,12 +28,10 @@
   "author": "IntraCompany",
   "type": "module",
   "scripts": {
-    "copy:vue": "cp -R src/components dist && cp -R src/layouts dist",
     "copy:audio": "cp -R src/audio dist",
-    "copy:css": "cp -R src/css dist",
     "copy:fonts": "cp -R src/fonts dist",
     "build": "vite build",
-    "release": "npm run copy:vue && npm run copy:audio && npm run copy:css && npm run copy:fonts && vite build && npm version patch && npm publish --access public && git push"
+    "release": "npm run copy:audio && npm run copy:fonts && npm run build && npm version patch && npm publish --access public && git push"
   },
   "devDependencies": {
     "@types/bootstrap": "^5.2.10",

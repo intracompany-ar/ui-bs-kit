@@ -9,7 +9,7 @@ export default defineConfig({
         preprocessorOptions: {
             scss: {
                 // Agregué para que no me mande aviso de deprecated de bootstrap sass, cambia import por use
-                silenceDeprecations: ['mixed-decls', 'color-functions', 'global-builtin', 'import']
+                silenceDeprecations: ['mixed-decls', 'import']
             },
         }
     },
