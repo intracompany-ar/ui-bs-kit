@@ -38,7 +38,7 @@
     "sass": "1.77"
   },
   "peerDependencies": {
-    "@intracompany/commons_front": "file:../commons_front",
+    "@intracompany/commons_front": "^1.0",
     "@selectize/selectize": "^0.15",
     "@vitejs/plugin-vue": "^5.0",
     "axios": "^1.6",
