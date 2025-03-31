@@ -1,0 +1,19 @@
+{
+  "name": "@intracompany/ui-bs-kit",
+  "version": "1.0.0",
+  "description": "Componentes Bootstrap 5 UI",
+  "keywords": [
+    "frontend"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "ui-bs-kit"
+  },
+  "license": "MIT",
+  "author": "IntraCompany",
+  "type": "module",
+  "main": "index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
