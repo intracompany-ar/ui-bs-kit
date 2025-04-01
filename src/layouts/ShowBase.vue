@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {ref, watch} from 'vue'
+import {computed, ref, watch} from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 const $router = useRouter();
 const $route = useRoute();
@@ -18,10 +18,17 @@ const props = defineProps({
 const loading = ref(false)
 const error = ref(null)
 
-watch(() => $route.params[props.paramIdName], fetchData, { immediate: true })
+// Falla porque no encuenta $route
+// watch(() => $route.params[props.paramIdName], fetchData, { immediate: true })
+
+// Creamos una propiedad computada para el parámetro específico
+const routeParam = computed(() => {return $route && $route.params ? $route.params[props.paramIdName] : undefined;});
+watch(routeParam, fetchData, { immediate: true })
 
 defineExpose({ fetchData })
 async function fetchData() {
+    if(!$route){ console.error('No $route found'); return }
+    
     if($route.params[props.paramIdName]){
         error.value = model.value = null
         loading.value = true
