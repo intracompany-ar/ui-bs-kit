@@ -30,41 +30,6 @@ function ocultarAvisoBackEnd() {
     });
 }
 
-let storeAdvices = null;
-
-// onMounted(() => {
-//     storeAdvices = useStoreAdvices();
-//     storeAdvices.$onAction(({
-//         name, // name of the action
-//         store, // store instance, same as `someStore`
-//         args, // array of parameters passed to the action
-//         after, // hook after the action returns or resolves
-//         onError, // hook if the action throws or rejects
-//     }) => {
-//         // console.log(callback)
-//         switch(name)
-//         {
-//             case 'copiar':
-//                 notificar('Info', 'Texto copiado al portapapeles. Utilícelo con Ctrl+V o Pegar');
-//                 break;
-//             case 'success':
-//                 notificar('Success', args[0], args[1]); 
-//                 break;
-//             case 'info':
-//                 notificar('Info', args[0], args[1]); 
-//                 break;
-//             case 'danger':
-//                 notificar('Danger', args[0], args[1]); 
-//                 break;
-//             case 'warning':
-//                 notificar('Warning', args[0], args[1]); 
-//                 break;
-//             default:
-//                 notificar('Danger', 'Falló la operación.');
-//         };
-//     })
-// })
-
 function notificar(tipo, content, titulo = null) {
     if (Array.isArray(content)) {
         // TODO ver como hago un <ul><li></li></ul>
@@ -96,7 +61,6 @@ function notificar(tipo, content, titulo = null) {
             console.error('No existe el elemento con id', id);
             return;
         }
-        storeAdvices.showing = true;
         toastElement.style.display = 'block'; // Muestra el toast estableciendo el estilo display a 'block'
 
         // Opcional: Personaliza otros estilos según tus necesidades
@@ -110,7 +74,6 @@ function notificar(tipo, content, titulo = null) {
             // Cuando se cierre el toast lo elimino del avisosDOM
             avisosDOM.value.shift();
             toastElement.style.display = 'none';
-            storeAdvices.showing = false;
         }, optionToast.value.duration ?? 3000); // Duración predeterminada: 3000 ms (3 segundos)
 
         if (WITH_AUDIO) {

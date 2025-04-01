@@ -1,13 +1,12 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useStoreAdvices } from '@intracompany/commons_front'
+import { showAdvice } from '@intracompany/commons_front'
 import { configDefaultDatatable } from './../defaults/datatable';
 import $ from 'jquery';
 // import 'datatables.net';
 import DataTable from 'datatables.net-bs5';
 // $.extend(true, $.fn.dataTable.defaults, configDefaultDatatable);
 
-const storeAdvices = useStoreAdvices()
 const emit = defineEmits(['openModalShow']);
 
 const RANDOM_ID = Math.round(Math.random() * 10000000);
@@ -129,7 +128,7 @@ function editRow() {
 
     axios.put(urlEdit+'/'+formData[props.parameterRouteName], formData)
         .then(response => {
-            storeAdvices.success('Actualizado');
+            showAdvice('success', 'Elemento actualizado');
             if (props.datatable && tabla && tabla.value) { tabla.value.destroy() }
             getRows(paramsGet.value);
             pasarAModoAdd();
@@ -141,7 +140,7 @@ function deleteRow(id) {
         let urlDelete = props.model;
         axios.delete(urlDelete+'/'+id)
             .then(response => {
-                storeAdvices.success('Elemento eliminado');
+                showAdvice('success', 'Elemento eliminado');
                 if (props.datatable && tabla && tabla.value) { tabla.value.destroy() }
                 getRows(paramsGet.value);
                 pasarAModoAdd();

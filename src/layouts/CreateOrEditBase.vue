@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import {ref, watch} from 'vue'
 import axios from 'axios';
-import { useStoreAdvices, disableSubmits, enableSubmits } from '@intracompany/commons_front'
+import { showAdvice, disableSubmits, enableSubmits } from '@intracompany/commons_front'
 import { useRoute, useRouter } from 'vue-router'
 const $route = useRoute();
 const $router = useRouter();
-const storeAdvices = useStoreAdvices()
 
 const model = defineModel()
 
@@ -61,7 +60,7 @@ function store()
     const data = props.enctype === 'multipart/form-data' ? convertToFormData(filteredRow) : filteredRow
     axios.post(props.modelName, data, {headers: {'Content-Type': props.enctype}})
         .then(response => { 
-            storeAdvices.success(props.modelName+' insertado');
+            showAdvice('success', props.modelName+' insertado');
             emit('created', response.data)
             if(props.routeBack) 
             {
@@ -87,7 +86,7 @@ function update(itemId)
         axios.post(props.modelName+'/' +itemId, data, {headers: {'Content-Type': props.enctype}})
             .then(response => { 
                 if(!response.data.message){
-                    storeAdvices.success(props.modelName+' actualizado');
+                    showAdvice('success', props.modelName+' actualizado');
                 }
                 $router.go(-1); 
             })
@@ -96,7 +95,7 @@ function update(itemId)
         const data = filteredRow
         axios.put(props.modelName+'/' +itemId, data)
             .then(response => { 
-                storeAdvices.success(props.modelName+' actualizado');
+                showAdvice('success', props.modelName+' actualizado');
                 $router.go(-1); 
             })
             .catch(error => { console.log(error) })

@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import { useStoreAdvices } from '@intracompany/commons_front'
+import { showAdvice } from '@intracompany/commons_front'
 import Method from './inputs/Method.vue';
-const storeAdvices = useStoreAdvices()
 const emit = defineEmits(['deleted']);
 
 const props = defineProps({
@@ -45,7 +44,7 @@ function submitForm() {
         if (isAsync.value) {
             axios.delete(urlDeleteReplaced.value)
                 .then(response => {
-                    storeAdvices.success('Eliminada');
+                    showAdvice('success', 'Elemento');
                     emit('deleted');
                 });
         } else {

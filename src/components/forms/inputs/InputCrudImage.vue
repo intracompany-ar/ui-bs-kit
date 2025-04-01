@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { useStoreAdvices } from '@intracompany/commons_front'
-const storeAdvices = useStoreAdvices()
+import { showAdvice } from '@intracompany/commons_front'
 
 defineProps({
     file_id: { required: false, type: [Number, String], default: null },
@@ -16,7 +15,7 @@ function eliminar() {
             .then(response => {
                 src.value = '';
                 file_id.value = '';
-                storeAdvices.success(response.data);
+                showAdvice('success', response.data);
             })
     }
 }

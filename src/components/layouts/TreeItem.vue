@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, inject } from 'vue'
-import { useStoreAdvices } from '@intracompany/commons_front'
-const storeAdvices = useStoreAdvices()
+import { showAdvice } from '@intracompany/commons_front'
 const emit = defineEmits(['getRows', 'itemSelected', 'toAdd']);
 
 const props = defineProps({
@@ -59,7 +58,7 @@ function update(itemParam) {
         .replace('%3Aid', props.item.id);
     axios.put(url, formData)
         .then(response => {
-            storeAdvices.success('Actualizado')
+            showAdvice('success', 'Actualizado');
             emit('getRows');
             modeEdit.value = 0;
         })
@@ -72,7 +71,7 @@ function destroy(itemId) {
             .replace('%3Aid', itemId);
         axios.delete(url)
             .then(response => {
-                storeAdvices.success('Eliminado');
+                showAdvice('success', 'Eliminado');
                 emit('getRows');
             })
     }
