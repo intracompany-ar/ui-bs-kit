@@ -1,12 +1,19 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import { useStoreAdvices } from '@intracompany/commons_front'
+import { watch, ref, onMounted } from 'vue'
+import { advice } from '@intracompany/commons_front'
 
 const WITH_AUDIO = false;
 const optionToast = ref({ animation: true });
 const avisosDOM = ref([]);
 
 ocultarAvisoBackEnd();
+
+watch(advice, (val) => {
+    if (val) {
+        notificar(`${val.type.toUpperCase()}`, Array.isArray(val.message) ? val.message.join(', ') : val.message, val.title);
+        advice.value = null
+    }
+})
 
 // LIVEWIRE (usa avisos backend como si fueran frontends)
 document.addEventListener("DOMContentLoaded", () => {
@@ -25,38 +32,38 @@ function ocultarAvisoBackEnd() {
 
 let storeAdvices = null;
 
-onMounted(() => {
-    storeAdvices = useStoreAdvices();
-    storeAdvices.$onAction(({
-        name, // name of the action
-        store, // store instance, same as `someStore`
-        args, // array of parameters passed to the action
-        after, // hook after the action returns or resolves
-        onError, // hook if the action throws or rejects
-    }) => {
-        // console.log(callback)
-        switch(name)
-        {
-            case 'copiar':
-                notificar('Info', 'Texto copiado al portapapeles. Utilícelo con Ctrl+V o Pegar');
-                break;
-            case 'success':
-                notificar('Success', args[0], args[1]); 
-                break;
-            case 'info':
-                notificar('Info', args[0], args[1]); 
-                break;
-            case 'danger':
-                notificar('Danger', args[0], args[1]); 
-                break;
-            case 'warning':
-                notificar('Warning', args[0], args[1]); 
-                break;
-            default:
-                notificar('Danger', 'Falló la operación.');
-        };
-    })
-})
+// onMounted(() => {
+//     storeAdvices = useStoreAdvices();
+//     storeAdvices.$onAction(({
+//         name, // name of the action
+//         store, // store instance, same as `someStore`
+//         args, // array of parameters passed to the action
+//         after, // hook after the action returns or resolves
+//         onError, // hook if the action throws or rejects
+//     }) => {
+//         // console.log(callback)
+//         switch(name)
+//         {
+//             case 'copiar':
+//                 notificar('Info', 'Texto copiado al portapapeles. Utilícelo con Ctrl+V o Pegar');
+//                 break;
+//             case 'success':
+//                 notificar('Success', args[0], args[1]); 
+//                 break;
+//             case 'info':
+//                 notificar('Info', args[0], args[1]); 
+//                 break;
+//             case 'danger':
+//                 notificar('Danger', args[0], args[1]); 
+//                 break;
+//             case 'warning':
+//                 notificar('Warning', args[0], args[1]); 
+//                 break;
+//             default:
+//                 notificar('Danger', 'Falló la operación.');
+//         };
+//     })
+// })
 
 function notificar(tipo, content, titulo = null) {
     if (Array.isArray(content)) {
