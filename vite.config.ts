@@ -22,15 +22,24 @@ export default defineConfig({
             fileName: (format) => `index.${format}.js`
         },
         rollupOptions: {
-            // MUY IMPORTANTE para que no me agregue esto al budnle del paquete, y no lo duplique con la app principal
-            external: ['vue', 'vue-router', 'bootstrap', '@selectize/selectize', 'dayjs'],
+            // MUY IMPORTANTE para que no me agregue esto al budnle del paquete, y no lo duplique con la app principal. VAN TODAS LAS DE peerDependencies
+            external: ['vue', 'vue-router', 'bootstrap', '@selectize/selectize', 'dayjs', '@intracompany/commons_front'
+                , 'datatables.net-bs5', 'datatables.net-buttons-bs5', 'jquery', '@vitejs/plugin-vue', 'axios', 'vite'
+            ],
             output: {
                 globals: {
+                    '@intracompany/commons_front': 'CommonsFront',
                     vue: 'Vue',
                     bootstrap: 'bootstrap',
                     dayjs: 'dayjs',
                     'vue-router': 'VueRouter',
-                    '@selectize/selectize': 'Selectize'
+                    '@selectize/selectize': 'Selectize',
+                    'datatables.net-bs5': 'DataTables',
+                    'datatables.net-buttons-bs5': 'DataTablesButtons',
+                    jquery: 'jQuery',
+                    axios: 'axios',
+                    'vite': 'Vite'
+                    
                 }
             }
         }

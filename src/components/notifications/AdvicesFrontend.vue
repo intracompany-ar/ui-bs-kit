@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { watch, ref, onMounted } from 'vue'
+import { watch, ref } from 'vue'
 import { advice } from '@intracompany/commons_front'
 
 const WITH_AUDIO = false;
@@ -8,12 +8,15 @@ const avisosDOM = ref([]);
 
 ocultarAvisoBackEnd();
 
+console.log('[UI-BS-KIT] advice ref ID:', advice, advice.value)
+
 watch(advice, (val) => {
+    console.log('[watch] advice cambió a:', val)
     if (val) {
-        notificar(`${val.type.toUpperCase()}`, Array.isArray(val.message) ? val.message.join(', ') : val.message, val.title);
+        notificar(`${val.type.toUpperCase()}`, Array.isArray(val.message) ? val.message.join(', ') : val.message, val.title)
         advice.value = null
     }
-})
+}, { immediate: true })
 
 // LIVEWIRE (usa avisos backend como si fueran frontends)
 document.addEventListener("DOMContentLoaded", () => {
@@ -30,7 +33,7 @@ function ocultarAvisoBackEnd() {
     });
 }
 
-function notificar(tipo, content, titulo = null) {
+function notificar(tipo: string, content: string, titulo = '') {
     if (Array.isArray(content)) {
         // TODO ver como hago un <ul><li></li></ul>
         console.warn('Falta implementar la lógica para contenido de tipo array');
