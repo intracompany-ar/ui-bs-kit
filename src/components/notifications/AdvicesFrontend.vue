@@ -3,17 +3,14 @@ import { watch, ref } from 'vue'
 import { advice } from '@intracompany/commons_front'
 
 const WITH_AUDIO = false;
-const optionToast = ref({ animation: true });
-const avisosDOM = ref([]);
+const optionToast = ref({ animation: true, duration: 3000 })
+const avisosDOM = ref<{ id: string, type: string, title: string, content: string }[]>([])
 
 ocultarAvisoBackEnd();
 
-console.log('[UI-BS-KIT] advice ref ID:', advice, advice.value)
-
-watch(advice, (val) => {
-    console.log('[watch] advice cambió a:', val)
+watch(advice, async (val) => {
     if (val) {
-        notificar(`${val.type.toUpperCase()}`, Array.isArray(val.message) ? val.message.join(', ') : val.message, val.title)
+        await pushAdvice(advice.value)
         advice.value = null
     }
 }, { immediate: true })
@@ -28,42 +25,40 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function ocultarAvisoBackEnd() {
-    $(".alert-temporal").fadeTo(10000, 10000).slideUp(500, function () {
-        $(".alert-temporal").slideUp(500);
-    });
+    const elementos = document.querySelectorAll('.alert-temporal')
+    elementos.forEach(el => {
+        (el as HTMLElement).style.transition = 'opacity 10s'
+        (el as HTMLElement).style.opacity = '0'
+        setTimeout(() => el.remove(), 10500)
+    })
 }
 
-function notificar(tipo: string, content: string, titulo = '') {
+async function pushAdvice(advice: any) {
+
+    let content = Array.isArray(advice.message) ? advice.message.join(', ') : advice.message
+
+    const tipoMap: Record<string, string> = {
+        info: 'Información',
+        danger: 'Error',
+        warning: 'Precaución',
+        success: 'Éxito',
+    }
+
+    const id = `${advice.type.toLowerCase()}-${Math.floor(Math.random() * 1e7)}`
+    let title = tipoMap[advice.title ?? advice.type] || advice.title || advice.type;
+
     if (Array.isArray(content)) {
         // TODO ver como hago un <ul><li></li></ul>
         console.warn('Falta implementar la lógica para contenido de tipo array');
         // return;
     };
 
-    console.log(tipo, content)
-
-    let id = tipo + Math.round(Math.random() * 10000000);
-
-    titulo = titulo ?? tipo;
-
-    // Mapeo de tipos a nombres más amigables
-    const tipoMap = {
-        'Info': 'Información',
-        'Danger': 'Error',
-        'Warning': 'Precaución',
-        'Success': 'Éxito',
-    };
-
-    titulo = tipoMap[titulo] || titulo;
-
-    avisosDOM.value.push({ tipo, titulo, content, id });
+    avisosDOM.value.push({ type, title, content, id });
 
     setTimeout(() => { // Le tengo que dar tiempo a vue js que renderize el DOM
         let toastElement = document.getElementById(id);
-        if (!toastElement) {
-            console.error('No existe el elemento con id', id);
-            return;
-        }
+        if (!toastElement) { return console.error('No existe el elemento con id', id); }
+
         toastElement.style.display = 'block'; // Muestra el toast estableciendo el estilo display a 'block'
 
         // Opcional: Personaliza otros estilos según tus necesidades
@@ -75,22 +70,23 @@ function notificar(tipo: string, content: string, titulo = '') {
         // Cierra el toast después de cierto tiempo (ajusta según tus necesidades)
         setTimeout(() => {
             // Cuando se cierre el toast lo elimino del avisosDOM
-            avisosDOM.value.shift();
             toastElement.style.display = 'none';
+            avisosDOM.value = avisosDOM.value.filter(a => a.id !== id)
         }, optionToast.value.duration ?? 3000); // Duración predeterminada: 3000 ms (3 segundos)
 
         if (WITH_AUDIO) {
-            let idTrackToPlay = tipo == 'Danger' || tipo == 'Warning' ? 'notiferror' : 'notifcoldday';
-            document.getElementById(idTrackToPlay).play();
+            const trackId = advice.type === 'danger' || advice.type === 'warning' ? 'notiferror' : 'notifcoldday'
+            const track = document.getElementById(trackId).play() as HTMLAudioElement
+            track?.play()
         };
 
     }, 500);
 }
 
-function cerrarToast(idParam){
+function cerrarToast(idParam: string){
     let el = document.getElementById(idParam)
-    if (el) { el.style.display = 'none'; }
-};
+    if (el) el.style.display = 'none'
+}
 </script>
 
 
@@ -99,21 +95,21 @@ function cerrarToast(idParam){
     <!-- Toaster (avisos frontend Bootstrap). Modal es z-index: 1060 => a este pongo 1070 -->
     <div class="toast-container position-fixed top-0 end-0 p-3" id="toastContainer" style="z-index: 1070; margin-top: 70px">
         <div v-for="aviso in avisosDOM" class="toast align-items-center"
-            v-bind:class="{   'text-white bg-primary': aviso.tipo == 'Info',
-                        'text-white bg-danger': aviso.tipo == 'Danger',
-                        'text-white bg-success': aviso.tipo == 'Success',
-                        'bg-warning': aviso.tipo == 'Warning'
+            v-bind:class="{   'text-white bg-primary': aviso.type == 'info',
+                        'text-white bg-danger': aviso.type == 'danger',
+                        'text-white bg-success': aviso.type == 'success',
+                        'bg-warning': aviso.type == 'warning'
                     }"
             role="alert" aria-live="assertive" aria-atomic="true" 
             v-bind:id="aviso.id">
             <div class="toast-header">
                 <strong class="me-auto">
-                    <i class="fas fa-info-circle" v-if="aviso.tipo == 'Info'"></i>
-                    <i class="fas fa-exclamation-circle" v-if="aviso.tipo == 'Danger'"></i>
-                    <i class="fas fa-exclamation-triangle" v-if="aviso.tipo == 'Warning'"></i>
-                    <i class="far fa-check-circle" v-if="aviso.tipo == 'Success'"></i>
+                    <i class="fas fa-info-circle" v-if="aviso.type == 'info'"></i>
+                    <i class="fas fa-exclamation-circle" v-if="aviso.type == 'danger'"></i>
+                    <i class="fas fa-exclamation-triangle" v-if="aviso.type == 'warning'"></i>
+                    <i class="far fa-check-circle" v-if="aviso.type == 'success'"></i>
 
-                    {{ aviso.titulo }}
+                    {{ aviso.title }}
                 </strong>
                 <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close" @click="cerrarToast(aviso.id)"></button>
             </div>
