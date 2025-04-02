@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { onMounted } from 'vue'
 import { watch, ref } from 'vue'
 import { advice } from '@intracompany/commons_front'
 
@@ -15,21 +16,22 @@ watch(advice, async (val) => {
     }
 }, { immediate: true })
 
-// LIVEWIRE (usa avisos backend como si fueran frontends)
-document.addEventListener("DOMContentLoaded", () => {
+// LIVEWIRE (usa avisos backend como si fueran frontends). lo dejo por la dudas, pero no estoy usando Livewire
+onMounted(() => {
     if (typeof Livewire !== 'undefined') {
-        Livewire.hook('message.processed', (message, component) => {
-            ocultarAvisoBackEnd();
+        Livewire.hook('message.processed', () => {
+            ocultarAvisoBackEnd()
         })
     }
-});
+})
 
 function ocultarAvisoBackEnd() {
     const elementos = document.querySelectorAll('.alert-temporal')
     elementos.forEach(el => {
-        (el as HTMLElement).style.transition = 'opacity 10s'
-        (el as HTMLElement).style.opacity = '0'
-        setTimeout(() => el.remove(), 10500)
+        const ele = el as HTMLElement
+        ele.style.transition = 'opacity 0.5s ease'
+        ele.style.opacity = '0'
+        setTimeout(() => el.remove(), 600)
     })
 }
 
@@ -53,7 +55,7 @@ async function pushAdvice(advice: any) {
         // return;
     };
 
-    avisosDOM.value.push({ type, title, content, id });
+    avisosDOM.value.push({ type: advice.type, title, content, id });
 
     setTimeout(() => { // Le tengo que dar tiempo a vue js que renderize el DOM
         let toastElement = document.getElementById(id);
@@ -76,7 +78,7 @@ async function pushAdvice(advice: any) {
 
         if (WITH_AUDIO) {
             const trackId = advice.type === 'danger' || advice.type === 'warning' ? 'notiferror' : 'notifcoldday'
-            const track = document.getElementById(trackId).play() as HTMLAudioElement
+            const track = document.getElementById(trackId).play() as HTMLAudioElement || null
             track?.play()
         };
 
