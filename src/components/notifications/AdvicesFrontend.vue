@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { onMounted } from 'vue'
 import { watch, ref } from 'vue'
 import { advice } from '@intracompany/commons_front'
 
@@ -10,34 +9,32 @@ const avisosDOM = ref<{ id: string, type: string, title: string, content: string
 ocultarAvisoBackEnd();
 
 watch(advice, async (val) => {
-    console.debug('advice', val)
     if (val) {
         await pushAdvice(advice.value)
         advice.value = null
     }
 }, { immediate: true })
 
-// LIVEWIRE (usa avisos backend como si fueran frontends). lo dejo por la dudas, pero no estoy usando Livewire
-onMounted(() => {
+// LIVEWIRE (usa avisos backend como si fueran frontends)
+document.addEventListener("DOMContentLoaded", () => {
     if (typeof Livewire !== 'undefined') {
-        Livewire.hook('message.processed', () => {
-            ocultarAvisoBackEnd()
+        Livewire.hook('message.processed', (message, component) => {
+            ocultarAvisoBackEnd();
         })
     }
-})
+});
 
 function ocultarAvisoBackEnd() {
     const elementos = document.querySelectorAll('.alert-temporal')
     elementos.forEach(el => {
-        const ele = el as HTMLElement
-        ele.style.transition = 'opacity 0.5s ease'
-        ele.style.opacity = '0'
-        setTimeout(() => el.remove(), 600)
+        (el as HTMLElement).style.transition = 'opacity 10s'
+        (el as HTMLElement).style.opacity = '0'
+        setTimeout(() => el.remove(), 10500)
     })
 }
 
 async function pushAdvice(advice: any) {
-    console.debug('pushAdvice', advice)
+
     let content = Array.isArray(advice.message) ? advice.message.join(', ') : advice.message
 
     const tipoMap: Record<string, string> = {
@@ -56,7 +53,7 @@ async function pushAdvice(advice: any) {
         // return;
     };
 
-    avisosDOM.value.push({ type: advice.type, title, content, id });
+    avisosDOM.value.push({ type, title, content, id });
 
     setTimeout(() => { // Le tengo que dar tiempo a vue js que renderize el DOM
         let toastElement = document.getElementById(id);
@@ -79,7 +76,7 @@ async function pushAdvice(advice: any) {
 
         if (WITH_AUDIO) {
             const trackId = advice.type === 'danger' || advice.type === 'warning' ? 'notiferror' : 'notifcoldday'
-            const track = document.getElementById(trackId).play() as HTMLAudioElement || null
+            const track = document.getElementById(trackId).play() as HTMLAudioElement
             track?.play()
         };
 

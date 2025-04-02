@@ -5,13 +5,13 @@
   "keywords": [
     "frontend"
   ],
-  "main": "./dist/index.umd.js",
+  "main": "./dist/index.js",
   "module": "./dist/index.es.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "import": "./dist/index.es.js",
-      "require": "./dist/index.umd.js"
+      "require": "./dist/index.js"
     },
     "./ui-bs-kit.css": {
       "default": "./dist/ui-bs-kit.css"
@@ -31,11 +31,17 @@
     "copy:audio": "cp -R src/audio dist",
     "copy:fonts": "cp -R src/fonts dist",
     "build": "vite build",
-    "release": "npm run copy:audio && npm run copy:fonts && npm run build && npm version patch && npm publish --access public && git push"
+    "release": "npm run copy:audio && npm run copy:fonts && npm run build && npm version patch && npm publish --access public && git push",
+    "test": "vitest",
+    "test:ui": "vitest --ui"
   },
   "devDependencies": {
     "@types/bootstrap": "^5.2.10",
-    "sass": "1.77"
+    "@vitest/ui": "^3.1.1",
+    "@vue/test-utils": "^2.4.6",
+    "jsdom": "^26.0.0",
+    "sass": "1.77",
+    "vitest": "^3.1.1"
   },
   "peerDependencies": {
     "@intracompany/commons_front": "^1.0",
@@ -44,10 +50,10 @@
     "axios": "^1.6",
     "bootstrap": "^5.0.0",
     "datatables.net-bs5": "^2.2",
+    "datatables.net-buttons-bs5": "^3.2",
     "dayjs": "^1.11",
     "vite": "^6.0",
     "vue": "^3.0",
-    "vue-router": "^4.1",
-    "datatables.net-buttons-bs5": "^3.2"
+    "vue-router": "^4.1"
   }
 }

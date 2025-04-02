@@ -1,7 +1,6 @@
 // vite.config.ts
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
-import path from 'path'
 
 export default defineConfig({
     plugins: [vue()],
@@ -13,13 +12,18 @@ export default defineConfig({
             },
         }
     },
+    test: {
+        globals: true,
+        environment: 'jsdom',
+        setupFiles: './tests/setup.ts' // opcional, si necesitás mocks o helpers globales
+    },
     build: {
         sourcemap: true,
         lib: {
-            entry: path.resolve(__dirname, 'src/index.mts'),
+            entry: 'src/index.ts', // tu archivo principal
             name: 'UiBsKit',
-            formats: ['es', 'umd'],
-            fileName: (format) => `index.${format}.js`
+            fileName: (format) => `index.${format}.js`,
+            formats: ['es'], // lo que necesites
         },
         rollupOptions: {
             // MUY IMPORTANTE para que no me agregue esto al budnle del paquete, y no lo duplique con la app principal. VAN TODAS LAS DE peerDependencies
