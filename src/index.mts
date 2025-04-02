@@ -19,6 +19,11 @@ export { default as SelectizeBase } from './components/forms/selects/SelectizeBa
 export { default as SelectizeBaseMulti } from './components/forms/selects/SelectizeBaseMulti.vue'
 export { default as SelectizeTags } from './components/forms/selects/SelectizeTags.vue'
 export { default as SelectBranchOffice } from './components/forms/selects/SelectBranchOffice.vue'
+export { default as SelectCompany } from './components/forms/selects/SelectCompany.vue'
+export { default as SelectCompanyGroup } from './components/forms/selects/SelectCompanyGroup.vue'
+export { default as SelectEmployee } from './components/forms/selects/SelectEmployee.vue'
+export { default as SelectSubsystems } from './components/forms/selects/SelectSubsystems.vue'
+export { default as SelectVehicle } from './components/forms/selects/SelectVehicle.vue'
 
 export { default as TextArea } from './components/forms/inputs/TextArea.vue'
 export { default as InputCrudImage } from './components/forms/inputs/InputCrudImage.vue'
