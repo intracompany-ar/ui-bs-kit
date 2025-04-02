@@ -10,6 +10,7 @@ const avisosDOM = ref<{ id: string, type: string, title: string, content: string
 ocultarAvisoBackEnd();
 
 watch(advice, async (val) => {
+    console.debug('advice', val)
     if (val) {
         await pushAdvice(advice.value)
         advice.value = null
@@ -36,7 +37,7 @@ function ocultarAvisoBackEnd() {
 }
 
 async function pushAdvice(advice: any) {
-
+    console.debug('pushAdvice', advice)
     let content = Array.isArray(advice.message) ? advice.message.join(', ') : advice.message
 
     const tipoMap: Record<string, string> = {
