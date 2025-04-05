@@ -5,11 +5,11 @@ import { tnaToTea, tnavToTnaa } from '@intracompany/commons_front'
 
 const DIAS_POR_ANIO = 12;
 
-const capitalizacion = ref(DIAS_POR_ANIO);
+const capitalizacion = ref<number>(DIAS_POR_ANIO);
 // Tasas implicita en pronto pago
-const descProntoPago = ref(12);
-const tiempoAdelantaPago = ref(2);
-const tna = ref(52.17);
+const descProntoPago = ref<number>(12);
+const tiempoAdelantaPago = ref<number>(2);
+const tna = ref<number>(52.17);
 
 const tnavDescPronto = computed(() => 
 {
@@ -47,13 +47,13 @@ const tnaaDescPronto = computed(() => { return Math.round(tnavToTnaa(tnavDescPro
     <div class="row">
         <div class="col-4 col-md-4">
             <label>
-                <span v-if="['360', '365'].includes(capitalizacion)">Días </span>
-                <span v-if="['52'].includes(capitalizacion)">Semanas </span>
-                <span v-if="['12'].includes(capitalizacion)">Meses </span>
-                <span v-if="['6'].includes(capitalizacion)">Bimestres </span>
-                <span v-if="['4'].includes(capitalizacion)">Trimestres </span>
-                <span v-if="['3'].includes(capitalizacion)">Cuatrimestres </span>
-                <span v-if="['2'].includes(capitalizacion)">Semestres </span>
+                <span v-if="[360, 365].includes(capitalizacion)">Días </span>
+                <span v-if="[52].includes(capitalizacion)">Semanas </span>
+                <span v-if="[12].includes(capitalizacion)">Meses </span>
+                <span v-if="[6].includes(capitalizacion)">Bimestres </span>
+                <span v-if="[4].includes(capitalizacion)">Trimestres </span>
+                <span v-if="[3].includes(capitalizacion)">Cuatrimestres </span>
+                <span v-if="[2].includes(capitalizacion)">Semestres </span>
                 
                 de anticipo del pago:</label>
             <input type="number" class="form-control form-control-sm" v-model="tiempoAdelantaPago" min="0" max="1000">

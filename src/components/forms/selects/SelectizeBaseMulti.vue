@@ -1,5 +1,11 @@
 <script setup lang="ts">
+import $ from 'jquery'
+// Extend HTMLElement to include the 'selectize' property
+interface HTMLElement {
+    selectize?: any;
+}
 import { watch, ref, onMounted } from 'vue'
+import axios from 'axios'
 import '@selectize/selectize'
 
 const model = defineModel()
@@ -54,7 +60,11 @@ async function setSelectize(){
     }
     const response = await axios(props.model+(props.config.useIndex ? '': '/select'))
     rows.value = response.data;
-    let elementosSeleteds = (typeof  model.value === 'string' ) ? model.value : (model.value ? (model.value.map(item => item.id ?? item)) : [])
+    let elementosSeleteds = (typeof model.value === 'string') 
+        ? model.value 
+        : (Array.isArray(model.value) 
+            ? model.value.map(item => item?.id ?? item) 
+            : []);
     
     input.selectize({
         plugins: ['restore_on_backspace', 'remove_button'],
@@ -65,13 +75,13 @@ async function setSelectize(){
         searchField: ['name'],
         options: rows.value,
         items: elementosSeleteds,
-        create(input) {
+        create(input: string) {
             return {
                 value: input,
                 text: input
             }
         },
-        onChange: async function(value) { 
+        onChange: async function(value: string | string[]) { 
             model.value = value; 
         }
     });

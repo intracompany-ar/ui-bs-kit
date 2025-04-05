@@ -1,7 +1,14 @@
 <script setup lang="ts">
 import { watch, onMounted } from 'vue'
 import { useFetch} from '@intracompany/commons_front'
-const {rows, setRows} = useFetch()
+
+type Sucursal = {
+    id: number
+    name: string
+    suc_cx_id?: number
+}
+
+const { rows, setRows } = useFetch<Sucursal>()
 
 const model = defineModel()
 

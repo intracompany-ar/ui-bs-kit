@@ -16,18 +16,18 @@ watch(advice, async (val) => {
 }, { immediate: true })
 
 // LIVEWIRE (usa avisos backend como si fueran frontends)
-document.addEventListener("DOMContentLoaded", () => {
-    if (typeof Livewire !== 'undefined') {
-        Livewire.hook('message.processed', (message, component) => {
-            ocultarAvisoBackEnd();
-        })
-    }
-});
+// document.addEventListener("DOMContentLoaded", () => {
+//     if (typeof Livewire !== 'undefined') {
+//         Livewire.hook('message.processed', (message, component) => {
+//             ocultarAvisoBackEnd();
+//         })
+//     }
+// });
 
 function ocultarAvisoBackEnd() {
     const elementos = document.querySelectorAll('.alert-temporal')
     elementos.forEach(el => {
-        (el as HTMLElement).style.transition = 'opacity 10s'
+        (el as HTMLElement).style.transition = 'opacity 10s';
         (el as HTMLElement).style.opacity = '0'
         setTimeout(() => el.remove(), 10500)
     })
@@ -53,6 +53,7 @@ async function pushAdvice(advice: any) {
         // return;
     };
 
+    const type = advice.type; // Define 'type' from 'advice.type'
     avisosDOM.value.push({ type, title, content, id });
 
     setTimeout(() => { // Le tengo que dar tiempo a vue js que renderize el DOM
@@ -76,8 +77,12 @@ async function pushAdvice(advice: any) {
 
         if (WITH_AUDIO) {
             const trackId = advice.type === 'danger' || advice.type === 'warning' ? 'notiferror' : 'notifcoldday'
-            const track = document.getElementById(trackId).play() as HTMLAudioElement
-            track?.play()
+            const trackElement = document.getElementById(trackId) as HTMLAudioElement | null;
+            if (trackElement) {
+                trackElement.play();
+            } else {
+                console.error('Audio element not found for trackId:', trackId);
+            }
         };
 
     }, 500);

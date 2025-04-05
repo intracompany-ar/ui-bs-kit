@@ -4,7 +4,21 @@ import 'dayjs/locale/es';
 import relativeTime from 'dayjs/plugin/relativeTime';
 dayjs.locale('es');
 dayjs.extend( relativeTime );
-defineProps({ tributaryIdSituacionRespuesta: { required: true, type: [Array, Object] } });
+defineProps({
+    tributaryIdSituacionRespuesta: {
+        required: true,
+        type: Object as () => {
+            dictamen?: string;
+            dictamen_texto?: string;
+            score_nosis?: string;
+            fecha?: string;
+            limite_credito?: { limite_credito?: string };
+            observation?: string;
+            created_by?: { name?: string };
+            created_at?: string;
+        } | null,
+    },
+});
 </script>
 
 <template>

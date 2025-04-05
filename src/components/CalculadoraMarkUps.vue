@@ -1,24 +1,24 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 
-const desc_proveed = ref(-27)
-const precio_lista = ref(100)
-const condition_table_discount = ref(0)
+const desc_proveed = ref<number>(-27)
+const precio_lista = ref<number>(100)
+const condition_table_discount = ref<number>(0)
 
 const costo = computed(() => {
-    return parseInt(precio_lista.value) * (100 + parseInt(desc_proveed.value)) / 100;
+    return precio_lista.value * (100 + desc_proveed.value) / 100;
 })
 
 const mark_up_lista = computed(() => {
-    return Math.round((parseInt(precio_lista.value) / parseInt(costo.value)) * 100) - 100;
+    return (precio_lista.value / costo.value) - 1;
 })
 
 const precio_rev_finz = computed(() => {
-    return Math.round(parseInt(precio_lista.value) * (100 + parseInt(condition_table_discount.value)) / 100);
+    return precio_lista.value * (100 + condition_table_discount.value) / 100;
 })
 
 const mark_up = computed(() => {
-    return Math.round((parseInt(precio_rev_finz.value) / parseInt(costo.value)) * 100) - 100;
+    return Math.round((precio_rev_finz.value / costo.value) * 100) - 100;
 })
 </script>
 

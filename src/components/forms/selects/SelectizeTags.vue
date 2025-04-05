@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import '@selectize/selectize'
+import axios from 'axios'
+import $ from 'jquery'
 
 const model = defineModel()
 
@@ -17,14 +19,16 @@ onMounted(() => {
                 labelField: 'name',
                 searchField: ['name'],
                 options: tags.value,
-                items: (typeof  model.value === 'string' )? model.value :  (model.value ? model.value.map(item => item.id) : []),
-                create(input) {
+                items: (typeof model.value === 'string') 
+                    ? model.value 
+                    : (Array.isArray(model.value) ? model.value.map((item: any) => item.id) : []),
+                create(input: string) {
                     return {
                         value: input,
                         text: input
                     }
                 },
-                onChange: function(value) { model.value = value; }
+                onChange: function(value: string | string[]) { model.value = value; }
             });
         })
 })

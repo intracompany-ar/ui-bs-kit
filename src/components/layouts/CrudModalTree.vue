@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { provide } from "vue";
+import axios from "axios";
 import ModalPpal from "./../ModalPpal.vue";
 import { useFetchDatatable, openModal } from '@intracompany/commons_front'
 import TreeItem from "./TreeItem.vue";
@@ -37,8 +38,9 @@ function open() {
 function getRows() { setRows(props.urlGetRoot) }
 
 function addRow() {
-    let formData = {};
-    formData["name"] = document.querySelector("#" + props.modalId + "_name").value;
+    let formData: { name: string } = { name: "" };
+    const inputElement = document.querySelector("#" + props.modalId + "_name") as HTMLInputElement;
+    formData["name"] = inputElement ? inputElement.value : "";
 
     axios.post(props.urlStore, formData)
         .then(() => {
@@ -49,11 +51,16 @@ function addRow() {
 
 function resetInputs() {
     if (document.querySelector("#" + props.modalId + "_name")) {
-        document.querySelector("#" + props.modalId + "_name").value = "";
+        const inputElement = document.querySelector("#" + props.modalId + "_name") as HTMLInputElement | null;
+        if (inputElement) {
+            inputElement.value = "";
+        }
     }
 }
 
-function pasarAModoAdd() { }
+function pasarAModoAdd(id: string) {
+    // Add logic here if needed
+}
 </script>
 
 <template>
@@ -75,7 +82,7 @@ function pasarAModoAdd() { }
                 <div class="row mt-4">
                     <div class="col-12">
                         <ul onselectstart="return false" style="list-style-type: none">
-                            <TreeItem v-for="row in rows" :key="row.id" :item="row"
+                            <TreeItem v-for="(row, index) in rows" :key="index" :item="row"
                                 :father-field="fatherField" class="tree-item" ref="treeItem" v-on:updated="getRows"
                                 v-on:item-selected="emit('itemSelected', {
                                     id: $event.id,

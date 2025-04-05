@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { watch } from 'vue'
 import { onMounted } from 'vue'
+import axios from 'axios'
 
 const model = defineModel();
 
@@ -21,7 +21,14 @@ const props = defineProps({
     } }
 });
 
-const rows = ref([])
+interface Vehicle {
+    id: number;
+    registration_plate: string;
+    brand?: { name: string };
+    model?: { name: string };
+}
+
+const rows = ref<Vehicle[]>([])
 
 onMounted(() => { if (props.loadOnMounted) { getRows() }; })
 
@@ -30,8 +37,9 @@ function getRows() {
         .then(response => {
             rows.value = response.data;
             // Dejo seleccionada la primera opción, sino queda en blanco
-            if (document.getElementById(props.id)) {
-                document.getElementById(props.id).value = $("#" + props.id + " option:first").val();
+            const element = document.getElementById(props.id) as HTMLSelectElement;
+            if (element) {
+                element.value = document.querySelector(`#${props.id} option:first`)?.getAttribute('value') || '';
             }
         })
 }

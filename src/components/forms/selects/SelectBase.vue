@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import axios from 'axios'
 
 const RANDOM_ID = Math.round(Math.random() * 10000000);
 
@@ -29,10 +30,14 @@ const props = defineProps({
         }}
     },
 
-    appendOptions: { required: false, type: Array, default() { return [] } },
+    appendOptions: { 
+        required: false, 
+        type: Array as () => Array<{ id: string | number, value: string | number, label: string }>, 
+        default() { return [] } 
+    },
 });
 
-const rows = ref([]);
+const rows = ref<Array<{ id: string | number; name: string }>>([]);
 
 onMounted(() => { if(!props.config.getOnDemand){ getRows() } })
 
@@ -56,7 +61,7 @@ function getRows(paramsParam = {}) {
         <label v-if="!props.config.formFloating && !props.config.withoutLabel" :for="props.id+RANDOM_ID" class="form-label"><slot></slot></label>
         <select class="form-control" :class="{ 'form-control-sm': props.config.sm, 'border border-2 border-primary': props.config.border }"  :id="props.id+RANDOM_ID" :name="props.name" :required="props.config.required" 
             v-model="model"
-            v-on:change="text = $event.target.options[$event.target.selectedIndex].text"
+            v-on:change="text = ($event.target as HTMLSelectElement).options[($event.target as HTMLSelectElement).selectedIndex].text"
             >
             <option :value="props.config.todosValueEmptyString ? '': 0" v-if="props.config.incluyeTodos" selected>Todas</option>
             

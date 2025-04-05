@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { showAdvice } from '@intracompany/commons_front'
-import { configDefaultDatatable } from './../defaults/datatable';
-import $ from 'jquery';
+import axios from 'axios'
+// import { configDefaultDatatable } from './../defaults/datatable';
+// import $ from 'jquery';
 // import 'datatables.net';
 import DataTable from 'datatables.net-bs5';
+import type { Api } from 'datatables.net';
 // $.extend(true, $.fn.dataTable.defaults, configDefaultDatatable);
 
 const emit = defineEmits(['openModalShow']);
@@ -13,9 +15,9 @@ const RANDOM_ID = Math.round(Math.random() * 10000000);
 
 const modoEdit = ref(false)
 const father_id = ref(0)
-const rows = ref([])
-const tabla = ref(null)
+const tabla = ref<Api | null>(null)
 const paramsGet = ref({})
+const rows = ref<any[]>([]) // Define rows as a reactive array
 
 const props = defineProps({
     id: { required: true, type: String }, // Tmb la uso para los id de la table
@@ -25,7 +27,10 @@ const props = defineProps({
     parameterRouteValue: { required: false, type: Number, default: 0 },
 
     // Requiere que una columna sea value id para que funcione el delete
-    columnas: { required: true, type: Array },
+    columnas: { 
+        required: true, 
+        type: Array as () => Array<{ value: string; titulo: string; valorFijo?: string; type?: string; selectOptions?: Array<{ id: string; name: string }>; valueAux?: string }>, 
+    },
     datatable: { required: false, type: Boolean, default: false },
     selectOptions: { required: false, type: [Array, Object], default() { return [] } },
     fatherField: { required: false, type: String, default: '' },
@@ -43,8 +48,8 @@ function getRows(paramsGetParam = {}) {
     paramsGet.value = paramsGetParam;
     let url = props.model;
     if (props.parameterRouteName) {
-        url = url.replace(':' + props.parameterRouteName, props.parameterRouteValue)
-            .replace('%3A' + props.parameterRouteName, props.parameterRouteValue);
+        url = url.replace(':' + String(props.parameterRouteName), String(props.parameterRouteValue))
+            .replace('%3A' + props.parameterRouteName, String(props.parameterRouteValue));
     };
 
     axios(url, { params: paramsGet.value })
@@ -57,8 +62,12 @@ function getRows(paramsGetParam = {}) {
         })
         .then(() => { 
             if (props.datatable && tabla) { 
-            // tabla.value = $('#table_' + props.id + RANDOM_ID).DataTable({ buttons: [] }) 
-            tabla.value = DataTable('#table_' + props.id + RANDOM_ID, { buttons: [] })
+            const tableElement = document.querySelector('#table_' + props.id + RANDOM_ID) as HTMLElement;
+            if (tableElement) {
+                tabla.value = $(tableElement).DataTable({
+                    buttons: []
+                }) as Api;
+            }
         } })
 }
 
@@ -71,18 +80,16 @@ function destroyTable() {
 }
 
 function resetInputs() {
-    props.columnas.forEach(columna => {
+    props.columnas.forEach((columna: { value: string; valorFijo?: string }) => {
+        const inputId = `#${props.id}_${columna.value}`;
+        const inputElement = document.querySelector<HTMLInputElement>(inputId);
 
-        if (document.querySelector('#' + props.id + '_' + columna.value)) {
-            document.querySelector('#' + props.id + '_' + columna.value).value = "";
-        };
-        
-        if (columna.valorFijo) {
+        if (inputElement && columna.valorFijo !== undefined) {
             console.debug('Set valor fijo', columna.valorFijo);
-            document.querySelector('#' + props.id + '_' + columna.value).value = columna.valorFijo;
+            inputElement.value = columna.valorFijo;
         }
     });
-}
+} 
 
 function pasarAModoAdd(father_idParam = 0) {
     father_id.value = father_idParam;
@@ -90,19 +97,19 @@ function pasarAModoAdd(father_idParam = 0) {
     modoEdit.value = false;
 }
 
-function pasarAEdicion(row) {
+function pasarAEdicion(row: Record<string, any>) {
     modoEdit.value = true;
     props.columnas.forEach(columna => {
         let el = document.querySelector('#' + props.id + '_' + columna.value);
-        if (el) { el.value = row[columna.value]; }
+        if (el) { (el as HTMLInputElement).value = row[columna.value]; }
     });
 }
 
 function store() {
-    let formData = {};
+    let formData: Record<string, any> = {};
     props.columnas.forEach(columna => {
         let el = document.querySelector('#' + props.id + '_' + columna.value);
-        if (el) { formData[columna.value] = el.value; }
+        if (el) { formData[columna.value] = (el as HTMLInputElement).value; }
 
         if (props.fatherField != '') {
             formData[props.fatherField] = father_id.value;
@@ -117,11 +124,11 @@ function store() {
 }
 
 function editRow() {
-    let formData = {};
+    let formData: Record<string, any> = {};
 
     props.columnas.forEach(columna => {
         let el = document.querySelector('#' + props.id + '_' + columna.value);
-        if (el) { formData[columna.value] = el.value; }
+        if (el) { formData[columna.value] = (el as HTMLInputElement).value; }
     });
 
     let urlEdit = props.model;
@@ -135,7 +142,7 @@ function editRow() {
         })
 }
 
-function deleteRow(id) {
+function deleteRow(id: string | number) {
     if (confirm('Seguro desea eliminar este elemento?')) {
         let urlDelete = props.model;
         axios.delete(urlDelete+'/'+id)
@@ -148,7 +155,7 @@ function deleteRow(id) {
     }
 }
 
-function evaluarVariableString(row, valueAux) {
+function evaluarVariableString(row: Record<string, any>, valueAux: string) {
     let arrayValueAux = valueAux.split('.');
     return row[arrayValueAux[0]] ? row[arrayValueAux[0]][arrayValueAux[1]] : '';
 }
@@ -167,7 +174,7 @@ function evaluarVariableString(row, valueAux) {
                             <i class="fas fa-times"></i></a>
                     </div>
 
-                    <input v-if="['hidden', 'text', 'number', 'date'].includes(columna.type)"
+                    <input v-if="['hidden', 'text', 'number', 'date'].includes(columna.type || '')"
                         class="form-control form-control-sm" :type="columna.type"
                         :id="props.id + '_' + columna.value">
 

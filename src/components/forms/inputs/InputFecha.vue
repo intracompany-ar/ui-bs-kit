@@ -17,6 +17,6 @@ const props = defineProps({
         <slot></slot>
     </label>
     <input type="date" class="form-control" v-bind:class="{ 'form-control-sm': props.small }" v-bind:name="props.name"
-        v-bind:id="props.id" v-bind:value="props.value" v-on:input="emit('input', $event.target.value)"
+        v-bind:id="props.id" v-bind:value="props.value" v-on:input="emit('input', ($event.target as HTMLInputElement)?.value)"
         v-bind:max="props.max" v-bind:min="props.min" v-bind:readonly="props.readonly" v-bind:required="props.required">
 </template>

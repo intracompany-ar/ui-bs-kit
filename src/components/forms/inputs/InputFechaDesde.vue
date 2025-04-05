@@ -6,7 +6,7 @@ const props = defineProps({
     id: { required: false, type: String, default: 'desde' },
     name: { required: false, type: String, default: 'desde' },
     big: { required: false, type: Boolean, default: false },
-    dias: { required: false, type: [String, Number], default: 30 },
+    dias: { required: false, type: [ Number], default: 30 },
 })
 
 const model = defineModel()

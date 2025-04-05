@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { onMounted } from 'vue';
+import axios from 'axios';
 
 const model = defineModel();
 
@@ -10,7 +11,12 @@ const props = defineProps({
     incluyeTodos: { required: false, type: [String, Boolean], default: 'false' }
 });
 
-const rows = ref([]);
+interface Row {
+    id: number | string;
+    name: string;
+}
+
+const rows = ref<Row[]>([]);
 
 onMounted( () => { getRows() })
 
@@ -20,7 +26,10 @@ function getRows()
         .then( response => {
             rows.value = response.data;
             if (document.getElementById(props.id)) {
-                document.getElementById(props.id).value = $("#"+props.id+" option:first").val();
+                const element = document.getElementById(props.id);
+                if (element) {
+                    (element as HTMLSelectElement).value = $("#"+props.id+" option:first").val() as string;
+                }
             }
         })
 }

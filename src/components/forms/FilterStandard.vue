@@ -71,11 +71,11 @@ const showHiddenFilters = () => {
             </div>
 
             <div class="col-md-2 col-6" v-if="config.from || config.to">
-                <InputFechaDesde v-if="config.from" v-model="from" :dias="diasFrom" :id="id ? 'from_' + id : null">Desde</InputFechaDesde>
-                <InputFechaHasta v-if="!config.datesSide && config.to" v-model="to" :id="id ? 'to_' + id : null">Hasta</InputFechaHasta>
+                <InputFechaDesde v-if="config.from" v-model="from" :dias="diasFrom" :id="id ? 'from_' + id : undefined">Desde</InputFechaDesde>
+                <InputFechaHasta v-if="!config.datesSide && config.to" v-model="to" :id="id ? 'to_' + id : undefined">Hasta</InputFechaHasta>
             </div>
             <div class="col-md-2 col-6" v-if="config.datesSide">
-                <InputFechaHasta v-if="config.to" v-model="to" :id="id ? 'to_' + id : null">Hasta</InputFechaHasta>
+                <InputFechaHasta v-if="config.to" v-model="to" :id="id ? 'to_' + id : undefined">Hasta</InputFechaHasta>
             </div>
 
             <slot></slot>

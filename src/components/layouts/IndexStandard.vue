@@ -13,7 +13,7 @@ const heads = computed(() => {
     
     let toReturn = [];
     let thereIsAColumnId = false;
-    props.columns.forEach(column => {
+    props.columns.forEach((column: { value: string; head: string }) => {
         thereIsAColumnId = column.value == 'id' ? true : thereIsAColumnId;
         toReturn.push(column.head)
     });
@@ -27,7 +27,7 @@ function getRows() {
     setRows(props.model, 'table-' + props.model) 
 }
 
-function getValue(obj, path, defaultValue = '') {
+function getValue(obj: Record<string, any>, path: string, defaultValue = '') {
     return path.split('.').reduce((acc, part) => {
         return acc && acc[part] !== undefined ? acc[part] : undefined;
     }, obj) ?? defaultValue;
@@ -49,7 +49,7 @@ function getValue(obj, path, defaultValue = '') {
                                 ? (row[column.value] ?? getValue(row, column.value, ''))
                                 : (column.textValue ?? '') }}
                         </td>
-                        <td v-if="props.canCrud && row.id">
+                        <td v-if="props.canCrud">
                             <!-- <FormEditDelete :urldelete="routerHas(props.model + '.destroy') ?
                                 props.model + '.destroy', row.id) : ''"
                                 :urledit="routerHas(props.model + '.edit') ? props.model + '.edit', row.id) : ''"

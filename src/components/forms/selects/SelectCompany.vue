@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { onMounted } from 'vue'
+import axios from 'axios'
 
 const model = defineModel()
 
@@ -23,10 +24,21 @@ const props = defineProps({
     company_group_id: { required: false, type: [Number, String], default: '0' },
     condicionIvaId: { required: false, type: Number, default: 0 },
 
-    appendOptions: { required: false, type: Array, default() { return [] } },
+    appendOptions: { 
+        required: false, 
+        type: Array as () => { value: string | number; id: string | number; label: string }[], 
+        default() { return [] } 
+    },
 });
 
-const rows = ref([]);
+interface Row {
+    id: number | string;
+    tributary_id?: number | string;
+    official_name?: string;
+    name?: string;
+}
+
+const rows = ref<Row[]>([]);
 
 onMounted(() => { getRows(); })
 
@@ -37,7 +49,11 @@ function getRows() {
             rows.value = response.data
             // Dejo seleccionada la primera opción, sino queda en blanco
             if (document.getElementById(props.id)) {
-                document.getElementById(props.id).value = $("#" + props.id + " option:first").val();
+                const element = document.getElementById(props.id);
+                if (element) {
+                    const firstOptionValue = $("#" + props.id + " option:first").val() || '';
+                    (element as HTMLSelectElement).value = firstOptionValue.toString();
+                }
             }
         })
 }

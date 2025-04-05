@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, inject } from 'vue'
 import { showAdvice } from '@intracompany/commons_front'
+import axios from 'axios'
 const emit = defineEmits(['getRows', 'itemSelected', 'toAdd']);
 
 const props = defineProps({
@@ -9,8 +10,8 @@ const props = defineProps({
 })
 
 const urlEdit = inject('urlEdit', null)
-const urlDestroy = inject('urlDestroy', null)
-const urlGetChildren = inject('urlGetChildren', null)
+const urlDestroy = inject<string | null>('urlDestroy', null)
+const urlGetChildren = inject<string | null>('urlGetChildren', null)
 const urlStore = inject('urlStore', null)
 
 const isOpen = ref(false)
@@ -25,7 +26,7 @@ const isFolder = computed(() => {
 })
 
 function toggle() {
-    if (!isFolder.value) { return }
+    if (!props.item || !isFolder.value) { return }
     if (!isOpen.value) { getChildren() }
     isOpen.value = isOpen.value ? !isOpen.value : isOpen.value
 }
@@ -33,29 +34,43 @@ function toggle() {
 function getChildren() {
     if (!urlGetChildren) { return }
 
+    if (!props.item) { return; }
     let url = urlGetChildren.replace(':fatherId', props.item.id)
         .replace('%3AfatherId', props.item.id);
 
     axios(url)
         .then(response => {
-            props.item.children = response.data;
+            if (props.item) {
+                props.item.children = response.data;
+            }
         })
         .then(() => isOpen.value = true)
 }
 
-function update(itemParam) {
-    let formData = {};
-    formData['name'] = document.querySelector('#input_edit_tree_' + itemParam.id).value;
+function update(itemParam: { id: string | number; [key: string]: any }) {
+    if (!itemParam.id) {
+        console.error('Item parameter must have an id');
+        return;
+    }
+    let formData: { [key: string]: any; id: string | number } = { id: itemParam.id };
+    const inputElement = document.querySelector<HTMLInputElement>('#input_edit_tree_' + itemParam.id);
+    formData['name'] = inputElement ? inputElement.value : '';
 
     if (props.fatherField != '') {
-        formData[props.fatherField] = itemParam[props.fatherField];
+        if (props.fatherField) {
+            formData[props.fatherField] = itemParam[props.fatherField];
+        }
     }
 
-    formData['id'] = props.item.id;
+    if (props.item) {
+        formData['id'] = props.item.id;
+    }
 
-    let url = urlEdit;
-    url = url.replace(':id', props.item.id)
-        .replace('%3Aid', props.item.id);
+    let url = typeof urlEdit === 'string' ? urlEdit : '';
+    if (props.item && url) {
+        url = url.replace(':id', props.item.id)
+            .replace('%3Aid', props.item.id);
+    }
     axios.put(url, formData)
         .then(response => {
             showAdvice('success', 'Actualizado');
@@ -64,33 +79,38 @@ function update(itemParam) {
         })
 }
 
-function destroy(itemId) {
-    if (confirm('Seguro desea eliminar este elemento?')) {
-        let url = props.urlDestroy;
-        url = url.replace(':id', itemId)
-            .replace('%3Aid', itemId);
-        axios.delete(url)
-            .then(response => {
-                showAdvice('success', 'Eliminado');
+function destroy(itemId: number) {
+    if (!confirm('Seguro desea eliminar este elemento?')) { return }
+    let url = typeof urlDestroy === 'string' ? urlDestroy : '';
+    if (url) {
+        url = url.replace(':id', String(itemId)).replace('%3Aid', String(itemId))
+    }
+    axios.delete(url)
+        .then(response => {
+            showAdvice('success', 'Eliminado');
+            emit('getRows');
+        })
+}
+
+function storeChild(itemId: string | number) {
+    let formData: { [key: string]: any; id: string | number } = { id: itemId };
+    const inputElement = document.querySelector<HTMLInputElement>('#name_child_' + itemId);
+    formData['name'] = inputElement ? inputElement.value : '';
+
+    if (props.fatherField && props.fatherField !== '') { formData[props.fatherField] = itemId }
+
+    if (typeof urlStore === 'string') {
+        axios.post(urlStore, formData)
+            .then(() => {
                 emit('getRows');
-            })
+                modeAddChild.value = 0;
+            });
+    } else {
+        console.error('urlStore is not a valid string');
     }
 }
 
-function storeChild(itemId) {
-    let formData = {};
-    formData['name'] = document.querySelector('#name_child_' + itemId).value;
-
-    if (props.fatherField != '') { formData[props.fatherField] = itemId }
-
-    axios.post(urlStore, formData)
-        .then(() => {
-            emit('getRows');
-            modeAddChild.value = 0;
-        });
-}
-
-function hasChildren() { return props.item.children ? props.item.children.length > 0 : false }
+function hasChildren() { return props.item && props.item.children ? props.item.children.length > 0 : false }
 </script>
 
 <style>
@@ -104,7 +124,7 @@ function hasChildren() { return props.item.children ? props.item.children.length
     <li style="list-style-type: none">
         <div class="row" :style="isFolder ? 'font-weight: bold' : ''">
             <div class="col-8">
-                <span v-if="isFolder && hasChildren()" v-on:click="toggle(props.item.id)">
+                <span v-if="isFolder && hasChildren() && props.item" v-on:click="toggle()">
                     <span v-show="isOpen"> <i class="far fa-minus-square"></i></span>
                     <span v-show="!isOpen"><i class="fas fa-plus-square"></i></span>
                 </span>
@@ -122,7 +142,7 @@ function hasChildren() { return props.item.children ? props.item.children.length
                             <input type="text" class="form-control form-control-sm" :value="props.item.name"
                                 :id="'input_edit_tree_' + props.item.id">
 
-                            <a href="#" class="btn btn-secondary" v-on:click.prevent="update(props.item)">
+                            <a href="#" class="btn btn-secondary" v-on:click.prevent="props.item?.id && update({ ...props.item, id: props.item.id })">
                                 <i class="fas fa-save"></i>
                             </a>
                             <a href="#" v-on:click.prevent="modeEdit = 0" class="btn btn-primary btn-sm">
@@ -139,20 +159,20 @@ function hasChildren() { return props.item.children ? props.item.children.length
             </div>
 
             <div class="col-4">
-                <a class="my-1" href="#" v-on:click.prevent="modeEdit = props.item.id" v-if="urlEdit">
+                <a class="my-1" href="#" v-on:click.prevent="props.item && (modeEdit = props.item.id)" v-if="urlEdit">
                     <i class="fas fa-edit"></i>
                 </a>
-                <a class="my-1" href="#" v-on:click.prevent="destroy(props.item.id)" v-if="urlDestroy">
+                <a class="my-1" href="#" v-on:click.prevent="props.item?.id && destroy(props.item.id)" v-if="urlDestroy">
                     <i class="fas fa-trash-alt"></i>
                 </a>
-                <a class="my-1" href="#" v-on:click.prevent="modeAddChild = props.item.id" v-if="fatherField != ''">
+                <a class="my-1" href="#" v-on:click.prevent="props.item && (modeAddChild = props.item.id)" v-if="fatherField != ''">
                     Agregar hijo
                 </a>
             </div>
 
-            <div class="col-md-8 col-12" v-if="modeAddChild == props.item.id && urlStore">
+            <div class="col-md-8 col-12" v-if="props.item && modeAddChild == props.item.id && urlStore">
                 <div class="input-group input-group-sm">
-                    <input class="form-control form-control-sm" type="text" :id="'name_child_' + item.id" />
+                    <input class="form-control form-control-sm" type="text" :id="'name_child_' + props.item.id" />
 
                     <a href="#" v-on:click.prevent="storeChild(props.item.id)" class="btn btn-secondary">
                         <i class="fas fa-save"></i>
@@ -168,7 +188,7 @@ function hasChildren() { return props.item.children ? props.item.children.length
         <ul v-show="isOpen" v-if="isFolder" class="m-0"
             style="list-style-type:none; padding-left: 1em; line-height: 1.5em; list-style-type: dot;">
 
-            <TreeItem class="tree-item" v-for="child in item.children" :key="child.id" :item="child"
+            <TreeItem class="tree-item" v-for="child in item?.children" :key="child.id" :item="child"
                 :father-field="fatherField" v-on:item-selected="emit('itemSelected', { 'id': $event.id })"
                 v-on:to-add="emit('toAdd', child)" />
         </ul>

@@ -38,7 +38,7 @@
                 v-bind:name="props.name"
                 v-bind:id="props.name"
                 v-bind:value="props.value"
-                v-on:input="emit('input', $event.target.value)"
+                v-on:input="emit('input', ($event.target as HTMLInputElement)?.value || '')"
                 v-bind:maxlength="props.max"
                 v-bind:readonly="props.readonly"
                 v-bind:required="props.required"

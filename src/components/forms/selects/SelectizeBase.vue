@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import '@selectize/selectize'
+import axios from 'axios'
+import $ from 'jquery'
 
 const model = defineModel()
 const text = defineModel('text')
@@ -8,7 +10,6 @@ const text = defineModel('text')
 const emit = defineEmits(['mounted'])
 
 const RANDOM_ID = Math.round(Math.random() * 10000000);
-
 
 const props = defineProps({
     name: { required: false, default: 'selectize_base_id', type: String },
@@ -49,9 +50,9 @@ function getRows(paramsParam = {}) {
                 searchField: ['name'],
                 options: rows.value,
                 items: [model.value],
-                onChange: function (valueSelected, isOnInitialize) { 
+                onChange: function (valueSelected: string | number | null, isOnInitialize: boolean) { 
                     model.value = valueSelected  
-                    text.value = this.options[valueSelected]?.name;
+                    text.value = valueSelected !== null ? this.options[valueSelected]?.name : '';
                 }
             });
         })

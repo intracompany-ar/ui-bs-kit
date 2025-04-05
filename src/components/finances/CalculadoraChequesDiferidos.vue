@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ref, computed } from "vue";
-import { tir, round, tnavToTnaa, tnaaToTnav, tnavToTndv, tasaRecargada_to_tnav, tasaRecargada_to_tea } from '@intracompany/commons_front';
-import dayjs from "dayjs";
+import { ref, computed } from "vue"
+import { tir, round, tnavToTnaa, tnaaToTnav, tnavToTndv, tasaRecargada_to_tnav, tasaRecargada_to_tea } from '@intracompany/commons_front'
+import dayjs from "dayjs"
 
 // https://www.mav-sa.com.ar/productos/derechos-para-operaciones-de-mercado/
 const TASA_DERECHO_MERCADO_COMPRA = 0.0003; // +iva s/importe descontado
@@ -11,33 +11,35 @@ const DIAS_MAX_PRORRATEO_DERECHO_MERCADO = 90;
 const TASA_IVA = 0.21;
 const DIAS_ANIO = 365;
 
-const tasaDescuento = ref(29);
-const importeNominal = ref(100000)
+const tasaDescuento = ref<number>(29);
+const importeNominal = ref<number>(100000)
 const fechaVencimiento = ref(dayjs().add(45, "day").format('YYYY-MM-DD'));
 const fechaNegociacion = ref(dayjs().format("YYYY-MM-DD"));
 const fechaLiquidacion = ref(dayjs(fechaNegociacion.value).add(1, 'day').format('YYYY-MM-DD')); // T+1: 24hs bursatiles luego de la fecha de concertó);
-const tnavPorcDelCpd = ref("29");
-const porcArancelAgenteByma = ref("1");
-const condicionIvaComprador = ref(1);
+const tnavPorcDelCpd = ref<number>(29);
+const porcArancelAgenteByma = ref<number>(1);
+const condicionIvaComprador = ref<number>(1);
 
-const diasAlVencimiento = computed(() => {
-    var a = dayjs(fechaVencimiento.value);
-    var b = dayjs(fechaLiquidacion.value);
-    return isNaN(a.diff(b, "day")) ? "" : a.diff(b, "day");
+const diasAlVencimiento = computed((): number => {
+    const a = dayjs(fechaVencimiento.value);
+    const b = dayjs(fechaLiquidacion.value);
+    return isNaN(a.diff(b, "day")) ? 0 : a.diff(b, "day");
 });
 
-const importeADescontarSobreValorNominal = computed(() => {
-    let tasaNetaADescontarVencida = tnavToTndv(parseFloat(tnavPorcDelCpd.value) / 100) * diasAlVencimiento.value;
-    return round(parseFloat(importeNominal.value) * tnavToTnaa(tasaNetaADescontarVencida));
+const importeADescontarSobreValorNominal = computed<number>(() => {
+    let tasaNetaADescontarVencida: number = Number(tnavToTndv(Number(tnavPorcDelCpd.value) / 100)) * Number(diasAlVencimiento.value);
+    return Number(importeNominal.value) * tnavToTnaa(tasaNetaADescontarVencida);
 });
 
-const montoEfectivoCPD = computed(() => {
-    return round(parseFloat(importeNominal.value) - importeADescontarSobreValorNominal.value);
+const montoEfectivoCPD = computed<number>(() => {
+    const importeNominalValue: number = Number(importeNominal.value || 0);
+    const importeADescontarValue: number = Number(importeADescontarSobreValorNominal.value || 0);
+    return importeNominalValue - importeADescontarValue;
 });
 
-const importeArancelAgenteByma = computed(() => {
-    let base = (parseFloat(importeNominal.value) * diasAlVencimiento.value) / 365;
-    return (base * parseFloat(porcArancelAgenteByma.value)) / 100;
+const importeArancelAgenteByma = computed<number>(() => {
+    let base = (importeNominal.value * diasAlVencimiento.value) / 365;
+    return (base * porcArancelAgenteByma.value) / 100;
 });
 
 /////////// COMPRADOR
@@ -48,22 +50,20 @@ const derechoMercado = computed(() => {
         : TASA_DERECHO_MERCADO_COMPRA;
 
     let tasaDerechoVenta =
-        diasAlVencimiento.value < DIAS_MAX_PRORRATEO_DERECHO_MERCADO
-            ? (diasAlVencimiento.value / DIAS_MAX_PRORRATEO_DERECHO_MERCADO) *
+        Number(diasAlVencimiento.value) < DIAS_MAX_PRORRATEO_DERECHO_MERCADO
+            ? (Number(diasAlVencimiento.value) / DIAS_MAX_PRORRATEO_DERECHO_MERCADO) *
             TASA_DERECHO_MERCADO_VENTA
             : TASA_DERECHO_MERCADO_VENTA;
     return {
-        vendedor: tasaDerechoVenta * parseFloat(montoEfectivoCPD.value),
-        comprador: tasaDerecho * parseFloat(montoEfectivoCPD.value)
+        vendedor: tasaDerechoVenta * parseFloat(String(montoEfectivoCPD.value)),
+        comprador: tasaDerecho * parseFloat(String(montoEfectivoCPD.value))
     }
 });
 
 
 const tEfectivaDelPeriodo = computed(() => {
-    let tasaEfectiva =
-        parseFloat(importeNominal.value) / parseFloat(importe.value.comprador) - 1;
-    let tasaEfectiva2 =
-        parseFloat(importeNominal.value) / parseFloat(importe.value.vendedor) - 1;
+    let tasaEfectiva = importeNominal.value / importe.value.comprador - 1;
+    let tasaEfectiva2 = importeNominal.value / importe.value.vendedor - 1;
     return {
         comprador: round(tasaEfectiva * 100),
         vendedor: round(tasaEfectiva2 * 100)
@@ -74,60 +74,56 @@ const tEfectivaDelPeriodo = computed(() => {
 /**
  * Gestos de negociación
  */
-const derechoListado = computed(() => { return TASA_DERECHO_DE_LISTADO_VENTA * importeNominal.value });
+const derechoListado = computed<number>(() => { return TASA_DERECHO_DE_LISTADO_VENTA * importeNominal.value });
 
-const gastosNegociacion = computed(() => {
+const gastosNegociacion = computed((): { vendedor: number; comprador: number } => {
     return {
-        vendedor: round(derechoMercado.value.vendedor + derechoListado.value + importeArancelAgenteByma.value),
-        comprador: round(derechoMercado.value.comprador + importeArancelAgenteByma.value)
+        vendedor: derechoMercado.value.vendedor + derechoListado.value + importeArancelAgenteByma.value,
+        comprador: derechoMercado.value.comprador + importeArancelAgenteByma.value
     };
 });
 
-const iva = computed(() => {
+const iva = computed((): { vendedor: number; comprador: number } => {
     return {
-        vendedor: round(TASA_IVA * gastosNegociacion.value.vendedor),
-        comprador: round(TASA_IVA * gastosNegociacion.value.comprador)
+        vendedor: TASA_IVA * Number(gastosNegociacion.value.vendedor),
+        comprador: TASA_IVA * Number(gastosNegociacion.value.comprador)
     }
 });
 
-const importe = computed(() => {
+const importe = computed((): { vendedor: number; comprador: number } => {
     return {
-        vendedor: montoEfectivoCPD.value - iva.value.vendedor - gastosNegociacion.value.vendedor,
-        comprador: round(
-            montoEfectivoCPD.value + gastosNegociacion.value.comprador + iva.value.comprador
-        )
-    }
+        vendedor: Number(montoEfectivoCPD.value) - Number(iva.value.vendedor) - Number(gastosNegociacion.value.vendedor),
+        comprador: Number(montoEfectivoCPD.value) + Number(gastosNegociacion.value.comprador) + Number(iva.value.comprador || 0)
+    };
 });
 
-const percIVA = computed(() => {
-    return round(parseFloat(TASA_IVA * importeADescontarSobreValorNominal.value));
+const percIVA = computed<number>(() => {
+    return Number(round(TASA_IVA * Number(importeADescontarSobreValorNominal.value)));
 });
 
-const tnavPorcConGastosImpuesto = computed(() => {
-    let tasaDescontada =
-        1 - parseFloat(importe.value.vendedor) / parseFloat(importeNominal.value);
-    let tnav = (tnaaToTnav(tasaDescontada) / diasAlVencimiento.value) * DIAS_ANIO;
+const tnavPorcConGastosImpuesto = computed((): { vendedor: number; comprador: number } => {
+    let tasaDescontada = 1 - importe.value.vendedor / importeNominal.value; 
+    let tnav = (tnaaToTnav(tasaDescontada) / Number(diasAlVencimiento.value)) * DIAS_ANIO;
 
-    let tasaRecargada =
-        parseFloat(importeNominal.value) / parseFloat(importe.value.comprador) - 1; // Lo que voy a cobrar / lo que pago hoy
-    let tnav2 = tasaRecargada_to_tnav(tasaRecargada, diasAlVencimiento.value);
+    let tasaRecargada = importeNominal.value / Number(importe.value.comprador) - 1; // Lo que voy a cobrar / lo que pago hoy
+    let tnav2 = !isNaN(diasAlVencimiento.value) ? tasaRecargada_to_tnav(tasaRecargada, diasAlVencimiento.value) : 0;
     return {
-        vendedor: round(tnav * 100),
-        comprador: round(tnav2 * 100)
+        vendedor: tnav * 100,
+        comprador: Number(tnav2) * 100
     }
 });
 
 
-const teaEquivalente = computed(() => {
+const teaEquivalente = computed((): { vendedor: number; comprador: number }  => {
     // Lo que podria haber cobrar / lo que cobro hoy
-    let tasaRecargada = parseFloat(importeNominal.value) / parseFloat(importe.value.vendedor);
+    let tasaRecargada = importeNominal.value / importe.value.vendedor;
 
     // Lo que voy a cobrar / lo que pago hoy
-    let tasaRecargada2 = parseFloat(importeNominal.value) / parseFloat(importe.value.comprador);
+    let tasaRecargada2 = importeNominal.value / importe.value.comprador;
 
     return {
-        vendedor: round(tasaRecargada_to_tea(tasaRecargada, diasAlVencimiento.value) * 100),
-        comprador: round(tasaRecargada_to_tea(tasaRecargada2, diasAlVencimiento.value) * 100)
+        vendedor: tasaRecargada_to_tea(tasaRecargada, Number(diasAlVencimiento.value) * 100),
+        comprador: tasaRecargada_to_tea(tasaRecargada2, (Number(diasAlVencimiento.value) || 0) * 100)
     }
 });
 //^^^^^^^^^^ VENDEDOR
@@ -283,7 +279,7 @@ const teaEquivalente = computed(() => {
 
                         <tr class="table-danger" v-if="condicionIvaComprador != 3">
                             <th>Recupero IVA</th>
-                            <td>${{ round(iva.vendedor) }}</td>
+                            <td>${{ round(Number(iva.vendedor) || 0) }}</td>
                             <td>${{ round(iva.comprador) }}</td>
                         </tr>
 

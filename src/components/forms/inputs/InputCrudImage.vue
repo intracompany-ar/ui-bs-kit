@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { showAdvice } from '@intracompany/commons_front'
+// import { showAdvice } from '@intracompany/commons_front'
+import axios from 'axios'
 
 defineProps({
     file_id: { required: false, type: [Number, String], default: null },
@@ -10,14 +11,15 @@ defineProps({
 })
 
 function eliminar() {
-    if (confirm('Seguro desea eliminar este file?')) {
-        axios.delete(route('file.destroy', props.file_id))
-            .then(response => {
-                src.value = '';
-                file_id.value = '';
-                showAdvice('success', response.data);
-            })
-    }
+    // Refactorizar
+    // if (confirm('Seguro desea eliminar este file?')) {
+    //     axios.delete(route('file.destroy', file_id))
+    //         .then(response => {
+    //             src.value = '';
+    //             file_id.value = '';
+    //             showAdvice('success', response.data);
+    //         })
+    // }
 }
 </script>
 

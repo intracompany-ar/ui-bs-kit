@@ -5,7 +5,8 @@ import { ref, onMounted } from 'vue'
 const csrf = ref(0);
 
 onMounted(() => {
-    csrf.value = document.head.querySelector('meta[name="csrf-token"]') ? document.head.querySelector('meta[name="csrf-token"]').content : 0;
+    const metaTag = document.head.querySelector('meta[name="csrf-token"]') as HTMLMetaElement | null;
+    csrf.value = metaTag?.content ? parseInt(metaTag.content, 10) || 0 : 0;
 });
 </script>
 

@@ -5,7 +5,7 @@ const emit = defineEmits(['update:modelValue']);
 
 const props = defineProps({
     number: { required: false, type: [String, Number], default: 0 },
-    modelValue: { required: false },
+    modelValue: { required: false, type: Number },
     valueCheckedIni: { required: false, type: String, default: 'D' },
 });
 
@@ -15,12 +15,12 @@ onMounted(() => { descRec.value = props.valueCheckedIni });
 
 watch(descRec, async () => {
     let sign = descRec.value == 'D' ? -1 : 1;
-    emit('update:modelValue', Math.abs(props.modelValue) * sign);
+    emit('update:modelValue', Math.abs(props.modelValue ?? 0) * sign);
 })
 
-function emitir(eventTargetValue) {
+function emitir(eventTargetValue: string | number) {
     let sign = descRec.value == 'D' ? -1 : 1;
-    emit('update:modelValue', Math.abs(eventTargetValue) * sign);
+    emit('update:modelValue', Math.abs(Number(eventTargetValue)) * sign);
 }
 </script>
 
@@ -42,7 +42,7 @@ function emitir(eventTargetValue) {
             <div class="input-group">
                 <input type="number" step="0.0001" class="form-control border-end-0  border border-2 border-primary" placeholder=" "
                     v-bind:id="'descuentoRecargo' + props.number"
-                    v-bind:value="props.modelValue == 0 ? '' : props.modelValue" v-on:input="emitir($event.target.value)" />
+                    v-bind:value="props.modelValue == 0 ? '' : props.modelValue" v-on:input="emitir(($event.target as HTMLInputElement)?.value)" />
                 <div class="input-group-text border border-start-0 border-2 border-primary">
                     <span class="input-group-addon">
                         <slot>%</slot>

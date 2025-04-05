@@ -5,8 +5,16 @@ const emit = defineEmits(['editMail', 'editPhoneNumber'])
 const props = defineProps({
     name: { required: false, type: String, default: 'N/N' },
     tributary_id: { required: false, type: [String, Number], default: '' },
-    mail_address: { required: false, type: [Object, Array], default: [] },
-    phoneNumber: { required: false, type: [Object, Array], default: [] },
+    mail_address: { 
+        required: false, 
+        type: Object as () => { mail: string; existe: string }, 
+        default: () => ({ mail: '', existe: '' }) 
+    },
+    phoneNumber: { 
+        required: false, 
+        type: Object as () => { exists: string; phone_number: string } | null, 
+        default: null 
+    },
     edit: { required: false, type: Boolean, default: false }
 });
 </script>
@@ -35,15 +43,16 @@ const props = defineProps({
         <div style="color: red;" v-else>
             Sin mail
         </div>
-        <span v-if="props.edit" v-on:click.prevent="emit('editMail')"><i class="fa fa-edit"></i></span>
-
-        <div class="text-muted" v-if="props.phoneNumber">
-            <div v-if="props.phoneNumber.exists == 'NO'">
-                <div style="color: red;">Tél Inexistente: {{ props.phoneNumber.phone_number }}</div>
-            </div>
-
-            <div v-else>
-                {{ props.phoneNumber.phone_number }}
+        
+        <div v-if="props.phoneNumber">
+            <span v-if="props.edit" v-on:click.prevent="emit('editMail')"><i class="fa fa-edit"></i></span>
+            <div class="text-muted">
+                <div v-if="props.phoneNumber.exists == 'NO'">
+                    <div style="color: red;">Tél Inexistente: {{ props.phoneNumber.phone_number }}</div>
+                </div>
+                <div v-else>
+                    {{ props.phoneNumber.phone_number }}
+                </div>
             </div>
         </div>
 

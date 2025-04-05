@@ -25,7 +25,13 @@ const props = defineProps({
     }
 });
 
-const rows = ref([]);
+interface Employment {
+    id: number;
+    entity_id: number;
+    name: string;
+}
+
+const rows = ref<Employment[]>([]);
 
 watch(() => props.sucursal_id, () => { getRows() });
 
@@ -33,12 +39,14 @@ onMounted(() => { if(!props.config.getOnDemand){ getRows() }});
 
 defineExpose({ getRows })
 function getRows() {
+    let url: string;
+    let params: { sucursalId?: string | number } = {};
+
     if(props.customUrl == '') {
-        var url = 'employment/select'
-        var params = { sucursalId: props.sucursal_id };
+        url = 'employment/select';
+        params = { sucursalId: props.sucursal_id };
     } else {
-        var url = props.customUrl;
-        var params = {};
+        url = props.customUrl;
     }
     axios(url, {params: params})
         .then(response => {
@@ -48,8 +56,8 @@ function getRows() {
 }
 
 function setDefaultOption() {
-    const selectElement = document.getElementById(props.id);
-    if (selectElement && selectElement.options.length > 0) {
+    const selectElement = document.getElementById(props.id) as HTMLSelectElement;
+    if (selectElement && selectElement.options?.length > 0) {
         selectElement.value = selectElement.options[0].value;
     }
 }
@@ -59,7 +67,7 @@ function setDefaultOption() {
 <template>
     <label class="form-label" :for="props.id"><slot>Empleado</slot></label>
     <select :name="props.name" class="form-control" :id="props.id" :class="{ 'form-control-sm': small }" v-model="model"
-        v-on:change="text = $event.target.options[$event.target.selectedIndex].text"
+        v-on:change="text = ((<HTMLSelectElement>$event.target)?.options?.[(<HTMLSelectElement>$event.target).selectedIndex]?.text || '')"
     >
 
         <option value="0" selected v-if="incluyeTodos == 'true'">Todas</option>

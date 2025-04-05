@@ -6,7 +6,7 @@ import { useRoute, useRouter } from 'vue-router'
 const $route = useRoute();
 const $router = useRouter();
 
-const model = defineModel()
+const model = ref<Record<string, any> | null>(null)
 
 const emit = defineEmits(['saving', 'creating', 'created', 'fetched'])
 
@@ -20,7 +20,7 @@ const props = defineProps({
 })
 
 const loading = ref(false)
-const error = ref(null)
+const error = ref<string | null>(null)
 
 enableSubmits();
 
@@ -37,13 +37,13 @@ async function fetchData() {
             model.value = await axios((props.customShowUrl ?? props.modelName) +'/' + $route.params.id)
                 .then(response => response.data)
         } catch (err) {
-            error.value = err.toString()
+            error.value = (err as Error).toString()
         } finally {
             loading.value = false;
             emit('fetched')
         }
     }else{
-        model.value = model.value && model.value != {} ? model.value : {}
+        model.value = model.value && Object.keys(model.value).length > 0 ? model.value : {}
     }
 }
 
@@ -54,7 +54,7 @@ function store()
     disableSubmits();
     // Filtrar valores null
     const filteredRow = Object.fromEntries(
-        Object.entries(model.value).filter(([_, value]) => value !== null)
+        Object.entries(model.value || {}).filter(([_, value]) => value !== null)
     );
 
     const data = props.enctype === 'multipart/form-data' ? convertToFormData(filteredRow) : filteredRow
@@ -73,12 +73,12 @@ function store()
         .then(() => enableSubmits())
 }
 
-function update(itemId)
+function update(itemId: number)
 {
     emit('saving')
     // Filtrar valores null
     const filteredRow = Object.fromEntries(
-        Object.entries(model.value).filter(([_, value]) => value !== null)
+        Object.entries(model.value || {}).filter(([_, value]) => value !== null)
     );
 
     if(props.enctype === 'multipart/form-data'){
@@ -102,7 +102,7 @@ function update(itemId)
     }
 }
 
-const convertToFormData = (obj, addPutMethod = false, formData = new FormData(), parentKey = '') => {
+const convertToFormData = (obj: Record<string, any>, addPutMethod = false, formData = new FormData(), parentKey = '') => {
     for (const key in obj) {
         if (obj.hasOwnProperty(key)) {
             const value = obj[key];

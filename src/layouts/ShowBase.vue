@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import {computed, ref, watch} from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import axios from 'axios'
 const $router = useRouter();
 const $route = useRoute();
 
-const model = defineModel()
+const model = ref<Record<string, any> | null>(null)
 
 const emit = defineEmits(['fetched'])
 
@@ -16,7 +17,7 @@ const props = defineProps({
 })
 
 const loading = ref(false)
-const error = ref(null)
+const error = ref<string | null>(null)
 
 // Falla porque no encuenta $route
 // watch(() => $route.params[props.paramIdName], fetchData, { immediate: true })
@@ -39,7 +40,7 @@ async function fetchData() {
                 .then(response => response.data)
             emit('fetched')
         } catch (err) {
-            error.value = err.toString()
+            error.value = (err instanceof Error ? err.message : String(err))
         } finally {
             loading.value = false
         }
@@ -67,7 +68,7 @@ async function fetchData() {
     <div class="row">
         <div class="col-12 text-end">
             <slot name="buttons"></slot>
-            <button class="btn btn-warning m-2" v-on:click.prevent="$router.push(`/${props.modelName}/${model[props.paramIdName]}/edit`)">Editar</button>
+            <button class="btn btn-warning m-2" v-on:click.prevent="model && $router.push(`/${props.modelName}/${model[props.paramIdName]}/edit`)">Editar</button>
         </div>
     </div>
 </template>

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import { showAdvice } from '@intracompany/commons_front'
+import { showAdvice } from '@intracompany/commons_front';
+import axios from 'axios';
 import Method from './inputs/Method.vue';
 const emit = defineEmits(['deleted']);
 
@@ -26,12 +27,12 @@ onMounted(() => {
     if (isAsync.value) {
         urlDeleteReplaced.value = props.urldelete
             ? props.urldelete
-                .replace(':' + props.idToReplace[0], props.idToReplace[1])
-                .replace('%3A' + props.idToReplace[0], props.idToReplace[1])
+                .replace(':' + props.idToReplace[0], String(props.idToReplace[1]))
+                .replace('%3A' + props.idToReplace[0], String(props.idToReplace[1]))
             : '';
         urledit2.value = props.urledit
-            ? props.urledit.replace(':' + props.idToReplace[0], props.idToReplace[1])
-                .replace('%3A' + props.idToReplace[0], props.idToReplace[1])
+            ? props.urledit.replace(':' + props.idToReplace[0], String(props.idToReplace[1]))
+                .replace('%3A' + props.idToReplace[0], String(props.idToReplace[1]))
             : '';
     } else {
         urlDeleteReplaced.value = props.urldelete;
@@ -48,7 +49,10 @@ function submitForm() {
                     emit('deleted');
                 });
         } else {
-            document.getElementById(props.id).submit();
+            const formElement = document.getElementById(props.id) as HTMLFormElement;
+            if (formElement) {
+                formElement.submit();
+            }
         };
     };
 }

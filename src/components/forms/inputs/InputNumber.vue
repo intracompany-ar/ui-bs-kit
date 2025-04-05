@@ -40,7 +40,7 @@
                 v-bind:max="max"
                 v-bind:min="min"
                 v-bind:step="step"
-                v-on:input="emit('input', $event.target.value)"
+                v-on:input="emit('input', ($event.target as HTMLInputElement)?.value)"
                 >
     </span>
 </template>

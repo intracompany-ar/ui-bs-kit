@@ -17,6 +17,11 @@
             type: Boolean,
             default: false
         },
+        required:{
+            required: false,
+            type: Boolean,
+            default: false
+        },
         placeholder:{
             required: false,
             type: String,
