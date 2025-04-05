@@ -2,7 +2,7 @@
 import { ref, onMounted, nextTick, computed } from 'vue'
 import ModalPpal from './ModalPpal.vue'
 import TableCrud from './TableCrud.vue'
-import type { CrudModalColumn } from '../types/CrudModalColumn'
+import type { CrudModalColumn } from '../types/CrudModal'
 
 interface TableCrudInterface {
     resetRows: () => void;
