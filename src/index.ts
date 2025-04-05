@@ -70,4 +70,5 @@ export { default as ExchangeRates } from './components/finances/ExchangeRates.vu
 
 export { default as notificationSound } from './audio/notification.mp3'
 
+export type { CrudModalType } from './types/CrudModalColumn'
 export type { CrudModalColumn } from './types/CrudModalColumn'
