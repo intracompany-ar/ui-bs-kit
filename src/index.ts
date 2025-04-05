@@ -69,3 +69,5 @@ export { default as ConvertTnaTea } from './components/finances/ConvertTnaTea.vu
 export { default as ExchangeRates } from './components/finances/ExchangeRates.vue'
 
 export { default as notificationSound } from './audio/notification.mp3'
+
+export type { CrudModalColumn } from './types/CrudModalColumn'

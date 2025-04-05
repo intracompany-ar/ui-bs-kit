@@ -2,6 +2,7 @@
 import { ref, onMounted, nextTick, computed } from 'vue'
 import ModalPpal from './ModalPpal.vue'
 import TableCrud from './TableCrud.vue'
+import type { CrudModalColumn } from '../types/CrudModalColumn'
 
 interface TableCrudInterface {
     resetRows: () => void;
@@ -11,15 +12,6 @@ interface TableCrudInterface {
 }
 
 const tableCrud = ref<TableCrudInterface | null>(null);
-
-type Columna = {
-    value: string;
-    titulo: string;
-    valorFijo?: string;
-    type?: string;
-    selectOptions?: any[];
-    valueAux?: string;
-}
 
 const props = withDefaults(defineProps<{
     titulo: string
@@ -32,7 +24,7 @@ const props = withDefaults(defineProps<{
     parameterRouteValue?: number
     params?: Record<string, any>
     // Requiere que una columna sea value id para que funcione el delete
-    columnas: Columna[]
+    columnas: CrudModalColumn[]
     selectOptions?: any
     fatherField?: string
     config?: {
