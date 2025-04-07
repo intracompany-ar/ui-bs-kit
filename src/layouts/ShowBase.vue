@@ -5,7 +5,7 @@ import axios from 'axios'
 const $router = useRouter();
 const $route = useRoute();
 
-const model = ref<Record<string, any> | null>(null)
+const model = defineModel<Record<string, any> | null>()
 
 const emit = defineEmits(['fetched'])
 
