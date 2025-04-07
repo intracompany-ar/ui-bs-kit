@@ -8,7 +8,7 @@ type Sucursal = {
     suc_cx_id?: number
 }
 
-const { rows, setRows } = useFetch<Sucursal>()
+const { rows, setRows } = useFetch<Sucursal[]>()
 
 const model = defineModel()
 
