@@ -9,7 +9,7 @@ const { rows, setRows, resetDataTable } = useFetchDatatable()
 const emit = defineEmits(["itemSelected"]);
 
 const props = defineProps({
-    titulo: { required: true, type: String },
+    title: { required: true, type: String },
     modalId: { required: true, type: String },
     
     large: { required: false, type: Boolean, default: false },
@@ -64,7 +64,7 @@ function pasarAModoAdd(id: string) {
 </script>
 
 <template>
-    <ModalPpal :titulo="titulo" :id="modalId" :large="large" :padding="0">
+    <ModalPpal :title="title" :id="modalId" :large="large" :padding="0">
         <template v-slot:bodymodal>
             <div class="container-fluid m-0 p-0">
                 <div class="row" v-if="props.urlStore">

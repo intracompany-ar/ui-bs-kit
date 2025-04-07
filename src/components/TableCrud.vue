@@ -29,7 +29,7 @@ const props = defineProps({
     // Requiere que una columna sea value id para que funcione el delete
     columnas: { 
         required: true, 
-        type: Array as () => Array<{ value: string; titulo: string; valorFijo?: string; type?: string; selectOptions?: Array<{ id: string; name: string }>; valueAux?: string }>, 
+        type: Array as () => Array<{ value: string; title: string; valorFijo?: string; type?: string; selectOptions?: Array<{ id: string; name: string }>; valueAux?: string }>, 
     },
     datatable: { required: false, type: Boolean, default: false },
     selectOptions: { required: false, type: [Array, Object], default() { return [] } },
@@ -200,7 +200,7 @@ function evaluarVariableString(row: Record<string, any>, valueAux: string) {
             </tr>
 
             <tr class="thead-inverse">
-                <th scope="col" v-for="(columna, index) in columnas" :key="index">{{ columna.titulo }}</th>
+                <th scope="col" v-for="(columna, index) in columnas" :key="index">{{ columna.title }}</th>
                 <th></th>
             </tr>
 

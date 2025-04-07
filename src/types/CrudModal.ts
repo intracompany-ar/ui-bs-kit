@@ -1,6 +1,6 @@
 export type CrudModalColumn = {
     value: string;
-    titulo: string;
+    title: string;
     valorFijo?: string;
     type: 'text' | 'hidden' | 'select' | 'checkbox' | 'date' | 'number' | 'textarea' | 'file' | 'image'
     selectOptions?: any[];

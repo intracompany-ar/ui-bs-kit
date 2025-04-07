@@ -14,7 +14,7 @@ interface TableCrudInterface {
 const tableCrud = ref<TableCrudInterface | null>(null);
 
 const props = withDefaults(defineProps<{
-    titulo: string
+    title: string
     subtitle?: string
     modalId: string //Tmb la uso para los id de la table
 
@@ -59,7 +59,7 @@ const parametersTableCrud = computed(() => ({
 }))
 
 const parametersModal = computed(() => ({
-    titulo: props.titulo,
+    title: props.title,
     subtitle: props.subtitle,
     id: props.modalId,
     large: props.config.large

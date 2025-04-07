@@ -5,7 +5,7 @@ import { closeModals } from '@intracompany/commons_front'
 const props = defineProps({
     id: { required: true, type: String },
     large: { required: false, type: Boolean, default: false },
-    titulo: { required: false, type: String, default: '' },
+    title: { required: false, type: String, default: '' },
     subtitle: { required: false, type: String, default: '' },
     dark: { required: false, type: Boolean, default: false },
     padding: { required: false, type: Number, default: 4 }
@@ -27,8 +27,8 @@ const props = defineProps({
                     <div class="container-fluid">
                         <div class="row">
                             <div class="col-10">
-                                <h3 class="modal-title" id="titulo_modal_ppal">
-                                    {{ props.titulo }}
+                                <h3 class="modal-title" id="title_modal_ppal">
+                                    {{ props.title }}
                                     <span class="loader"><i style="color: #d72f23"
                                             class="fa fa-cog fa-spin fa-fw"></i></span>
                                 </h3>
