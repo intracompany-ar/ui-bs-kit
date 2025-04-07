@@ -16,5 +16,5 @@ export type CrudModalType = {
         datatable?: boolean
     }
     columns: CrudModalColumn[]
-    parameterRouteName: string
+    parameterRouteName?: string
 }
