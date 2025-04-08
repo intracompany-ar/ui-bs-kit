@@ -6,7 +6,7 @@ import { useRoute, useRouter } from 'vue-router'
 const $route = useRoute();
 const $router = useRouter();
 
-const model = ref<Record<string, any> | null>(null)
+const model = defineModel<Record<string, any> | null>()
 
 const emit = defineEmits(['saving', 'creating', 'created', 'fetched'])
 
