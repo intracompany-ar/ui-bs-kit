@@ -25,33 +25,6 @@
 }
 
 
-#navbarPpal {
-    background-color: var(--Fate-gris);
-    overflow: visible;
-  }
-  
-  #navbarPpal .dropneuper a {
-    color: var(--Michelin-grismuyoscuro);
-  }
-  
-  #navbarPpal .dropneuper a:active {
-    background-color: #fff;
-  }
-
-#navbarPpal a {
-        color: #fff;
-}
-
-#navbarPpal a:hover {
-    color: var(--Fate-rojogastado);
-}
-
-#navbarPpal .nav-link {
-    font-size: 1.2rem;
-    padding-top: 0;
-    padding-bottom: 0;
-}
-
 
 /* BUTTONS */
 .btn-iceo {
