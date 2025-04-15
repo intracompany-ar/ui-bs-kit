@@ -1,6 +1,6 @@
 {
   "name": "@intracompany/ui-bs-kit",
-  "version": "1.0.30",
+  "version": "1.0.31",
   "description": "Componentes Bootstrap 5 UI",
   "keywords": [
     "frontend"
@@ -12,7 +12,7 @@
     ".": {
       "import": "./dist/index.es.js",
       "require": "./dist/index.js",
-      "default": "./dist/index.d.ts" 
+      "default": "./dist/index.d.ts"
     },
     "./ui-bs-kit.css": {
       "default": "./dist/ui-bs-kit.css"
