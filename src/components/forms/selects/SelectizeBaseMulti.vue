@@ -85,7 +85,7 @@ async function setSelectize(){
             model.value = value; 
         }
     });
-    console.debug('Selectize inicializado con', rows.value, model.value);
+    // console.debug('Selectize inicializado con', rows.value, model.value); 
 }
 </script>
 

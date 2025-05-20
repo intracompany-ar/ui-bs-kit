@@ -27,7 +27,7 @@ const props = defineProps({
     parameterRouteValue: { required: false, type: Number, default: 0 },
 
     // Requiere que una columna sea value id para que funcione el delete
-    columnas: { 
+    columns: { 
         required: true, 
         type: Array as () => Array<{ value: string; title: string; valorFijo?: string; type?: string; selectOptions?: Array<{ id: string; name: string }>; valueAux?: string }>, 
     },
@@ -80,7 +80,7 @@ function destroyTable() {
 }
 
 function resetInputs() {
-    props.columnas.forEach((columna: { value: string; valorFijo?: string }) => {
+    props.columns.forEach((columna: { value: string; valorFijo?: string }) => {
         const inputId = `#${props.id}_${columna.value}`;
         const inputElement = document.querySelector<HTMLInputElement>(inputId);
 
@@ -99,7 +99,7 @@ function pasarAModoAdd(father_idParam = 0) {
 
 function pasarAEdicion(row: Record<string, any>) {
     modoEdit.value = true;
-    props.columnas.forEach(columna => {
+    props.columns.forEach(columna => {
         let el = document.querySelector('#' + props.id + '_' + columna.value);
         if (el) { (el as HTMLInputElement).value = row[columna.value]; }
     });
@@ -107,7 +107,7 @@ function pasarAEdicion(row: Record<string, any>) {
 
 function store() {
     let formData: Record<string, any> = {};
-    props.columnas.forEach(columna => {
+    props.columns.forEach(columna => {
         let el = document.querySelector('#' + props.id + '_' + columna.value);
         if (el) { formData[columna.value] = (el as HTMLInputElement).value; }
 
@@ -126,7 +126,7 @@ function store() {
 function editRow() {
     let formData: Record<string, any> = {};
 
-    props.columnas.forEach(columna => {
+    props.columns.forEach(columna => {
         let el = document.querySelector('#' + props.id + '_' + columna.value);
         if (el) { formData[columna.value] = (el as HTMLInputElement).value; }
     });
@@ -166,7 +166,7 @@ function evaluarVariableString(row: Record<string, any>, valueAux: string) {
         width="100%" cellspacing="0" border="1">
         <thead>
             <tr>
-                <td v-for="(columna, index) in columnas" :key="index">
+                <td v-for="(columna, index) in columns" :key="index">
                     <div v-if="father_id != 0">
                         Hijo de {{ father_id }}
 
@@ -200,7 +200,7 @@ function evaluarVariableString(row: Record<string, any>, valueAux: string) {
             </tr>
 
             <tr class="thead-inverse">
-                <th scope="col" v-for="(columna, index) in columnas" :key="index">{{ columna.title }}</th>
+                <th scope="col" v-for="(columna, index) in columns" :key="index">{{ columna.title }}</th>
                 <th></th>
             </tr>
 
@@ -208,7 +208,7 @@ function evaluarVariableString(row: Record<string, any>, valueAux: string) {
 
         <tbody>
             <tr v-for="(row, index) in rows" :key="index">
-                <td v-for="(columna, index) in columnas" :key="index">
+                <td v-for="(columna, index) in columns" :key="index">
                     <div v-if="columna.valueAux">
                         {{ evaluarVariableString(row, columna.valueAux) }}
                     </div>

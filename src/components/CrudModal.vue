@@ -24,7 +24,7 @@ const props = withDefaults(defineProps<{
     parameterRouteValue?: number
     params?: Record<string, any>
     // Requiere que una columna sea value id para que funcione el delete
-    columnas: CrudModalColumn[]
+    columns: CrudModalColumn[]
     selectOptions?: any
     fatherField?: string
     config?: {
@@ -50,7 +50,7 @@ const parametersTableCrud = computed(() => ({
     model: props.model,
     parameterRouteName: props.parameterRouteName,
     parameterRouteValue: props.parameterRouteValue,
-    columnas: props.columnas,
+    columns: props.columns,
     datatable: props.config.datatable,
     selectOptions: props.selectOptions,
     fatherField: props.fatherField,
