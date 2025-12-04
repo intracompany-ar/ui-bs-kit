@@ -64,7 +64,6 @@ export { default as CreateOrEditBase } from './layouts/CreateOrEditBase.vue'
 
 export { default as ConvertTasaImplicitaDescProntoPago } from './components/finances/ConvertTasaImplicitaDescProntoPago.vue'
 export { default as CalculadoraChequesDiferidos } from './components/finances/CalculadoraChequesDiferidos.vue'
-export { default as ConvertTasaAnticipadaVencida } from './components/finances/ConvertTasaAnticipadaVencida.vue'
 export { default as ConvertTnaTea } from './components/finances/ConvertTnaTea.vue'
 export { default as ExchangeRates } from './components/finances/ExchangeRates.vue'
 
