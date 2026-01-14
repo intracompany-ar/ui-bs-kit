@@ -1,3 +1,4 @@
+<!-- Migre a layer shell: TributaryIdSituacionRespuestaShow -->
 <script setup lang="ts">
 import dayjs from 'dayjs';
 import 'dayjs/locale/es';
@@ -10,7 +11,7 @@ defineProps({
         type: Object as () => {
             dictamen?: string;
             dictamen_texto?: string;
-            score_nosis?: string;
+            score?: string;
             fecha?: string;
             limite_credito?: { limite_credito?: string };
             observation?: string;
@@ -34,7 +35,7 @@ defineProps({
             {{ tributaryIdSituacionRespuesta.dictamen_texto }}
             <span class="badge bg-secondary">
                 <small>Scr</small>
-                {{ tributaryIdSituacionRespuesta.score_nosis }}</span>
+                {{ tributaryIdSituacionRespuesta.score }}</span>
         </button>
         <br>
         <span class="text-muted">Fecha del Score:</span> {{ tributaryIdSituacionRespuesta.fecha }}
