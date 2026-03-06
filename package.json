@@ -52,7 +52,7 @@
   "peerDependencies": {
     "@intracompany/commons_front": "^1.2",
     "@selectize/selectize": "^0.15",
-    "@vitejs/plugin-vue": "^5.0",
+    "@vitejs/plugin-vue": "^5.0 || ^6.0",
     "axios": "^1.8",
     "bootstrap": "^5.0.0",
     "datatables.net-bs5": "^2.2",

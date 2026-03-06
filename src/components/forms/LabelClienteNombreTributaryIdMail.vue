@@ -1,3 +1,4 @@
+<!-- Migrado a layer-shell -->
 <script setup lang="ts">
 import { isEmail } from '@intracompany/commons_front'
 
